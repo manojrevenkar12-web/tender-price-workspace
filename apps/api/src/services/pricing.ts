@@ -30,9 +30,15 @@ export const MATCH = {
   /** Trigram similarity a signature needs to be retrieved as a candidate. */
   minSimilarity: 0.2,
   candidatesPerPosition: 60,
+  /** How many of a position's rarest words the second retrieval path looks for. */
+  rareWords: 3,
+  /** Weight of a word no historical wording uses: that of a word in this share of wordings. */
+  unknownWordShare: 0.1,
   /** Word score (domain/text.ts wordScore) a candidate needs to be used. */
   minScore: 0.55,
   signaturesUsed: 20,
+  /** A used wording's weight must be at least this share of the best wording's. */
+  relativeWeight: 0.5,
   /** How far back history is used, in quarters before the target quarter. */
   windowQuarters: 12,
 };
@@ -107,9 +113,7 @@ interface Candidate {
   idx: number;
   id: number;
   attributes: Record<string, string>;
-  sample: string;
   norm_words: string;
-  sim: number;
 }
 
 function describe(words: string, attributes: Record<string, string>): string {
@@ -124,20 +128,41 @@ export function resetVocabulary(): void {
   vocabulary = null;
 }
 
-async function idf(db: Db): Promise<(w: string) => number> {
+interface Vocabulary {
+  /** Inverse document frequency. A word no historical wording uses says nothing about which
+   * wording is meant, so it weighs like a common word rather than like the rarest. */
+  weight: (w: string) => number;
+  known: (w: string) => boolean;
+}
+
+async function idf(db: Db): Promise<Vocabulary> {
   if (!vocabulary || Date.now() - vocabulary.at > 600_000) {
     const r = await db.query<{ word: string; df: number }>(
-      "SELECT word, count(*)::int AS df FROM price_signatures, unnest(string_to_array(norm_words, ' ')) AS word GROUP BY word",
+      "SELECT word, count(*)::int AS df FROM price_signatures, unnest(words) AS word GROUP BY word",
     );
     const n = (await db.query<{ n: number }>("SELECT count(*)::int AS n FROM price_signatures")).rows[0]!.n;
     vocabulary = { at: Date.now(), df: new Map(r.rows.map((x) => [x.word, x.df])), n };
   }
   const v = vocabulary;
-  return (w) => Math.log(1 + v.n / (v.df.get(w) ?? 1));
+  const unknown = Math.log(1 + v.n / Math.max(1, v.n * MATCH.unknownWordShare));
+  return {
+    weight: (w) => {
+      const df = v.df.get(w);
+      return df ? Math.log(1 + v.n / df) : unknown;
+    },
+    known: (w) => v.df.has(w),
+  };
 }
 
+/** Which historical signatures answered a query, for offline evaluation (never sent to clients). */
+export type Trace = (query: number, used: readonly { id: number; weight: number }[]) => void;
+
 /** Benchmarks for many positions with two round trips to the database. */
-export async function priceMany(db: Db, queries: readonly PriceQuery[]): Promise<PriceAnswer[]> {
+export async function priceMany(
+  db: Db,
+  queries: readonly PriceQuery[],
+  trace?: Trace,
+): Promise<PriceAnswer[]> {
   const prepared = queries.map((q) => {
     const unit = parseUnit(q.unit);
     const n = normalisePosition(q.text, q.longText ?? "");
@@ -180,32 +205,47 @@ export async function priceMany(db: Db, queries: readonly PriceQuery[]): Promise
   }
   if (todo.length === 0) return answers as PriceAnswer[];
 
+  // Candidates come from two paths: trigram similarity of the whole wording (typos, close
+  // spellings) and sharing the position's rarest words (the same work among other words).
+  const vocab = await idf(db);
+  const rare = todo.map((t) =>
+    t.n.words
+      .filter(vocab.known)
+      .sort((a, b) => vocab.weight(b) - vocab.weight(a) || a.localeCompare(b))
+      .slice(0, MATCH.rareWords)
+      .join(" "),
+  );
   await db.query("SELECT set_config('pg_trgm.similarity_threshold', $1, true)", [
     String(MATCH.minSimilarity),
   ]);
   const cand = await db.query<Candidate>(
-    `SELECT q.idx::int AS idx, s.id, s.attributes, s.sample, s.norm_words, s.sim
-       FROM unnest($1::text[], $2::text[]) WITH ORDINALITY AS q(words, unit, idx)
+    `SELECT q.idx::int AS idx, s.id, s.attributes, s.norm_words
+       FROM unnest($1::text[], $2::text[], $4::text[]) WITH ORDINALITY AS q(words, unit, rare, idx)
        CROSS JOIN LATERAL (
-         SELECT id, attributes, sample, norm_words, similarity(norm_words, q.words) AS sim
-           FROM price_signatures
-          WHERE unit_code = q.unit AND norm_words % q.words
-          ORDER BY similarity(norm_words, q.words) DESC
-          LIMIT $3
+         (SELECT id, attributes, norm_words
+            FROM price_signatures
+           WHERE unit_code = q.unit AND norm_words % q.words
+           ORDER BY similarity(norm_words, q.words) DESC
+           LIMIT $3)
+         UNION
+         (SELECT id, attributes, norm_words
+            FROM price_signatures
+           WHERE unit_code = q.unit AND words && string_to_array(q.rare, ' ')
+           ORDER BY cardinality(ARRAY(SELECT unnest(words) INTERSECT SELECT unnest(string_to_array(q.words, ' ')))) DESC, id
+           LIMIT $3)
        ) s`,
-    [todo.map((t) => t.n.words.join(" ")), todo.map((t) => t.base!.code), MATCH.candidatesPerPosition],
+    [todo.map((t) => t.n.words.join(" ")), todo.map((t) => t.base!.code), MATCH.candidatesPerPosition, rare],
   );
   const byQuery = new Map<number, Candidate[]>();
   for (const c of cand.rows) byQuery.set(c.idx - 1, [...(byQuery.get(c.idx - 1) ?? []), c]);
 
   // Rank each position's candidates: word score squared times attribute fit.
-  const weightOf = await idf(db);
   const chosen = new Map<number, { id: number; weight: number; sample: string; sim: number }[]>();
   const allIds = new Set<number>();
   todo.forEach((t, k) => {
-    const ranked = (byQuery.get(k) ?? [])
+    let ranked = (byQuery.get(k) ?? [])
       .map((c) => {
-        const score = wordScore(t.n.words, c.norm_words.split(" "), weightOf);
+        const score = wordScore(t.n.words, c.norm_words.split(" "), vocab.weight);
         return {
           id: c.id,
           // What the match is, normalised: other customers' raw position texts are never shown.
@@ -217,6 +257,10 @@ export async function priceMany(db: Db, queries: readonly PriceQuery[]): Promise
       .filter((c) => c.weight > 0)
       .sort((a, b) => b.weight - a.weight)
       .slice(0, MATCH.signaturesUsed);
+    // Only wordings nearly as good as the best one count: many weak matches of a neighbouring
+    // kind of work (wall formwork for a concrete wall) must not outvote one exact match.
+    const best = ranked[0]?.weight ?? 0;
+    ranked = ranked.filter((c) => c.weight >= best * MATCH.relativeWeight);
     chosen.set(k, ranked);
     for (const c of ranked) allIds.add(c.id);
   });
@@ -248,6 +292,7 @@ export async function priceMany(db: Db, queries: readonly PriceQuery[]): Promise
     const adj = adjCache.get(key)!;
     const lo = quarterBefore(t.q.quarter, MATCH.windowQuarters);
     const sigs = chosen.get(k)!;
+    trace?.(t.i, sigs);
     const points: PricePoint[] = [];
     for (const s of sigs) {
       for (const p of bySig.get(s.id) ?? []) {

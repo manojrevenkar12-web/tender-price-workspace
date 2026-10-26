@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { attributeFit, normalise, normalisePosition, trigramSimilarity, wordScore } from "../src/index.ts";
+import {
+  attributeFit,
+  normalise,
+  normalisePosition,
+  sameWord,
+  trigramSimilarity,
+  wordScore,
+} from "../src/index.ts";
 
 describe("normalise", () => {
   it("puts two estimators' wording of the same wall on one key", () => {
@@ -92,5 +99,18 @@ describe("normalisePosition", () => {
   });
   it("lets the short text win when both state an attribute", () => {
     expect(normalisePosition("Estrich d=5 cm", "Estrich d=6 cm").attributes).toEqual({ thickness_mm: "50" });
+  });
+});
+
+describe("word forms", () => {
+  it("meets participles and infinitives", () => {
+    expect(normalise("Rohr verlegt").words).toEqual(normalise("Rohr verlegen").words);
+    expect(normalise("lagenweise verdichtet").words).toEqual(normalise("lagenweise verdichten").words);
+  });
+
+  it("treats a longer form or a compound as the same word", () => {
+    expect(sameWord("grundier", "grundierung")).toBe(true);
+    expect(sameWord("spuelkast", "unterputzspuelkast")).toBe(true);
+    expect(sameWord("wand", "wandflaech")).toBe(false); // too short to be sure
   });
 });

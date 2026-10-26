@@ -64,6 +64,39 @@ beforeEach(async () => {
   );
 });
 
+describe("matching", () => {
+  const ask = (text: string, unit = "m2") =>
+    withSystem(c.pool, (db) => priceMany(db, [{ text, unit, region: "BE", quarter: "2026Q3" }]));
+
+  it("finds the same work among other words, which trigram similarity alone misses", async () => {
+    // Context words estimators add ("Achse", "Bauabschnitt", "Bestand") are common in the history.
+    for (let i = 0; i < 40; i++) await signature("pc", `achs bauabschnitt bestand neubau teil${i}`, {}, "x");
+    const s = await signature(
+      "m2",
+      "achs bauabschnitt bestand neubau planziegel ziegel",
+      { thickness_mm: "365" },
+      "x",
+    );
+    await points(s, six(15_000));
+    const [a] = await ask("Außenmauerwerk aus Planziegeln, 36,5 cm dick");
+    expect(a).toMatchObject({ status: "ok", signatures: 1 });
+  });
+
+  it("does not let many weak neighbours outvote one exact match", async () => {
+    // Twelve wall-formwork wordings (cheap) against one concrete wall wording (expensive).
+    for (let i = 0; i < 12; i++) {
+      const f = await signature("m2", `schalung wand glatt variante${i}`, {}, "x");
+      await points(
+        f,
+        six(3_000).map(([co, p]) => [co + 10 * (i + 1), p] as [number, number]),
+      );
+    }
+    const [a] = await ask("Stahlbetonwand d = 24 cm einschl. Schalung");
+    expect(a!.status).toBe("ok");
+    expect(a!.status === "ok" && a!.p50).toBeGreaterThan(9_000);
+  });
+});
+
 describe("price check", () => {
   it("uses only the same work: same attributes, same unit dimension", async () => {
     const r = (

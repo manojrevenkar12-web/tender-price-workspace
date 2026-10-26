@@ -192,12 +192,19 @@ const SYNONYMS: Record<string, string> = {
   flachsturz: "sturz",
   schuko: "schutzkontakt",
   raufasertapete: "raufaser tapete",
+  grundleitung: "abwasser rohr",
+  grundleitungen: "abwasser rohr",
 };
 
+/**
+ * Light stemming: plural and infinitive endings, and past participles, so that "verlegen",
+ * "verlegt" and "verlegte" meet ("verdichten", "verdichtet" likewise).
+ */
 function stem(w: string): string {
   if (w.length < 5) return w;
-  for (const suffix of ["en", "e"])
+  for (const suffix of ["en", "et", "e"])
     if (w.endsWith(suffix) && w.length - suffix.length >= 4) return w.slice(0, -suffix.length);
+  if (w.length >= 6 && /[glkrh]t$/.test(w)) return w.slice(0, -1);
   return w;
 }
 
@@ -366,6 +373,10 @@ export function editDistance(a: string, b: string, cap = 3): number {
 
 export function sameWord(a: string, b: string): boolean {
   if (a === b) return true;
+  // A word and its longer form or compound: "grundier" / "grundierung",
+  // "spuelkast" / "unterputzspuelkast".
+  const [short, long] = a.length <= b.length ? [a, b] : [b, a];
+  if (short.length >= 6 && (long.startsWith(short) || long.endsWith(short))) return true;
   const n = Math.min(a.length, b.length);
   if (n < 5) return false;
   return editDistance(a, b, 2) <= (n >= 9 ? 2 : 1);
