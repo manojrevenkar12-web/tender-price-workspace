@@ -8,5 +8,4 @@ apps/web/dist/
 cypress/videos/
 cypress/screenshots/
 .turbo/
-data/
 apps/web/cypress/fixtures/demo.json

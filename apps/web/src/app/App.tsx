@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MotionConfig } from "framer-motion";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 
 import { lazy, Suspense, type ReactNode } from "react";
@@ -57,9 +58,12 @@ const router = createBrowserRouter([
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <RouterProvider router={router} />
-      </ToastProvider>
+      {/* Animations follow the operating system's reduced-motion setting. */}
+      <MotionConfig reducedMotion="user">
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </MotionConfig>
     </QueryClientProvider>
   );
 }
