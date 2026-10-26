@@ -23,7 +23,7 @@ import { type Answered, byFamily, error, type Summary, summarise } from "./metri
 const ROOT = new URL("../../../reports/", import.meta.url);
 const config = loadConfig();
 const admin = createPool(config.migrationDatabaseUrl, 2);
-const app = createPool(config.databaseUrl, 4);
+const app = createPool(config.databaseUrl, 6);
 
 const truth = new Map(
   (
@@ -120,8 +120,9 @@ if (big.rows.length) {
     quarter: EVAL_QUARTER,
   }));
   await withSystem(app, (db) => pricing.priceMany(db, qs.slice(0, 50))); // warm the vocabulary cache
+  // As the background job does it: four connections at once.
   const t0 = performance.now();
-  await withSystem(app, (db) => pricing.priceMany(db, qs));
+  await pricing.pricePool(app, qs);
   bulk = { positions: qs.length, ms: performance.now() - t0 };
   for (const q of qs.filter((_, i) => i % 40 === 0)) {
     const s = performance.now();
@@ -244,10 +245,12 @@ function worst(rows: Answered[]) {
     .sort((a, b) => b.error - a.error)
     .slice(0, 10);
 }
-const eur = (c: number | undefined) =>
-  c === undefined
+
+function eur(c: number | undefined) {
+  return c === undefined
     ? ""
     : `${(c / 100).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
+}
 
 function markdown(r: typeof report, firstRun: { recordedAt: string; blind: Summary }): string {
   const line = (name: string, s: Summary) =>
@@ -295,7 +298,7 @@ ${r.worstBlind.map((w) => `| ${w.family} | ${w.region} | ${w.text} | ${eur(w.p50
 
 | what | result |
 | --- | --- |
-| price a ${r.latency.bulk?.positions ?? 0}-position BoQ in one call | ${r.latency.bulk ? `${(r.latency.bulk.ms / 1000).toFixed(2)} s (${(r.latency.bulk.ms / r.latency.bulk.positions).toFixed(1)} ms per position)` : "n/a"} |
+| price a ${r.latency.bulk?.positions ?? 0}-position BoQ (background job, 4 connections) | ${r.latency.bulk ? `${(r.latency.bulk.ms / 1000).toFixed(2)} s (${(r.latency.bulk.ms / r.latency.bulk.positions).toFixed(1)} ms per position)` : "n/a"} |
 | price one position (p50 / p95) | ${r.latency.singleP50.toFixed(0)} ms / ${r.latency.singleP95.toFixed(0)} ms |
 | comparison, ${r.comparison?.rows ?? 0} positions x ${r.comparison?.bids ?? 0} bids (p50 / p95, in process) | ${r.comparison ? `${r.comparison.p50.toFixed(0)} ms / ${r.comparison.p95.toFixed(0)} ms` : "n/a"} |
 | comparison payload (raw / gzip) | ${r.comparison ? `${(r.comparison.rawBytes / 1e6).toFixed(1)} MB / ${(r.comparison.gzipBytes / 1e6).toFixed(2)} MB` : "n/a"} |

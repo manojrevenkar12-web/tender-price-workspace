@@ -24,7 +24,9 @@ import {
   wordScore,
 } from "@tpw/domain";
 
-import type { Db } from "../db.ts";
+import type pg from "pg";
+
+import { type Db, withSystem } from "../db.ts";
 
 export const MATCH = {
   /** Trigram similarity a signature needs to be retrieved as a candidate. */
@@ -39,6 +41,8 @@ export const MATCH = {
   signaturesUsed: 20,
   /** A used wording's weight must be at least this share of the best wording's. */
   relativeWeight: 0.5,
+  /** Connections a background job prices a bill of quantities on. */
+  parallel: 4,
   /** How far back history is used, in quarters before the target quarter. */
   windowQuarters: 12,
 };
@@ -215,18 +219,17 @@ export async function priceMany(
       .slice(0, MATCH.rareWords)
       .join(" "),
   );
-  await db.query("SELECT set_config('pg_trgm.similarity_threshold', $1, true)", [
-    String(MATCH.minSimilarity),
-  ]);
   const cand = await db.query<Candidate>(
     `SELECT q.idx::int AS idx, s.id, s.attributes, s.norm_words
        FROM unnest($1::text[], $2::text[], $4::text[]) WITH ORDINALITY AS q(words, unit, rare, idx)
        CROSS JOIN LATERAL (
          (SELECT id, attributes, norm_words
-            FROM price_signatures
-           WHERE unit_code = q.unit AND norm_words % q.words
-           ORDER BY similarity(norm_words, q.words) DESC
-           LIMIT $3)
+            FROM (SELECT id, attributes, norm_words
+                    FROM price_signatures
+                   WHERE unit_code = q.unit
+                   ORDER BY norm_words <-> q.words
+                   LIMIT $3) nearest
+           WHERE similarity(norm_words, q.words) >= $5)
          UNION
          (SELECT id, attributes, norm_words
             FROM price_signatures
@@ -234,7 +237,13 @@ export async function priceMany(
            ORDER BY cardinality(ARRAY(SELECT unnest(words) INTERSECT SELECT unnest(string_to_array(q.words, ' ')))) DESC, id
            LIMIT $3)
        ) s`,
-    [todo.map((t) => t.n.words.join(" ")), todo.map((t) => t.base!.code), MATCH.candidatesPerPosition, rare],
+    [
+      todo.map((t) => t.n.words.join(" ")),
+      todo.map((t) => t.base!.code),
+      MATCH.candidatesPerPosition,
+      rare,
+      MATCH.minSimilarity,
+    ],
   );
   const byQuery = new Map<number, Candidate[]>();
   for (const c of cand.rows) byQuery.set(c.idx - 1, [...(byQuery.get(c.idx - 1) ?? []), c]);
@@ -330,6 +339,30 @@ export async function priceMany(
     } else answers[t.i] = { ...b, signatures: sigs.length, matches };
   }
   return answers as PriceAnswer[];
+}
+
+/**
+ * Prices a whole bill of quantities on several connections at once (read-only), for the
+ * background job: a 2,000-position tender is a few hundred queries per connection.
+ */
+export async function pricePool(
+  pool: pg.Pool,
+  queries: readonly PriceQuery[],
+  parallel = MATCH.parallel,
+  chunk = 200,
+): Promise<PriceAnswer[]> {
+  const out: PriceAnswer[] = new Array(queries.length);
+  let next = 0;
+  const work = async () => {
+    while (next < queries.length) {
+      const from = next;
+      next += chunk;
+      const part = await withSystem(pool, (db) => priceMany(db, queries.slice(from, from + chunk)));
+      part.forEach((a, i) => (out[from + i] = a));
+    }
+  };
+  await Promise.all(Array.from({ length: parallel }, work));
+  return out;
 }
 
 export async function priceOne(db: Db, q: PriceQuery): Promise<PriceAnswer> {

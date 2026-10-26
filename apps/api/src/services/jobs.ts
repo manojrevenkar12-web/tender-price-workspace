@@ -11,7 +11,7 @@ import { normalisePosition, parseUnit, priceConversion, quarterOf } from "@tpw/d
 import type pg from "pg";
 
 import { type Db, withSystem } from "../db.ts";
-import { baseUnit, priceMany, refreshRegionFactors, resetVocabulary } from "./pricing.ts";
+import { baseUnit, pricePool, refreshRegionFactors, resetVocabulary } from "./pricing.ts";
 import { event, positions } from "./tenders.ts";
 
 export interface Job {
@@ -21,9 +21,9 @@ export interface Job {
   attempts: number;
 }
 
-type Handler = (db: Db, payload: Record<string, unknown>) => Promise<void>;
+type Handler = (db: Db, payload: Record<string, unknown>, pool: pg.Pool) => Promise<void>;
 
-async function benchmarkVersion(db: Db, payload: Record<string, unknown>): Promise<void> {
+async function benchmarkVersion(db: Db, payload: Record<string, unknown>, pool: pg.Pool): Promise<void> {
   const tenderId = String(payload["tenderId"]);
   const version = Number(payload["version"]);
   const t = await db.query<{ org_id: string; region: string; deadline: Date | null }>(
@@ -34,8 +34,8 @@ async function benchmarkVersion(db: Db, payload: Record<string, unknown>): Promi
   if (!tender) return; // deleted meanwhile
   const pos = await positions(db, tenderId, version);
   const quarter = quarterOf(tender.deadline ?? new Date());
-  const answers = await priceMany(
-    db,
+  const answers = await pricePool(
+    pool,
     pos.map((p) => ({
       text: p.shortText,
       longText: p.longText,
@@ -141,7 +141,7 @@ export async function runOne(pool: pg.Pool, log: (m: string) => void = () => und
   const handler = HANDLERS[job.kind];
   try {
     if (!handler) throw new Error(`no handler for ${job.kind}`);
-    await withSystem(pool, (db) => handler(db, job.payload));
+    await withSystem(pool, (db) => handler(db, job.payload, pool));
     await withSystem(pool, (db) =>
       db.query("UPDATE jobs SET status = 'done', finished_at = now(), last_error = NULL WHERE id = $1", [
         job.id,
