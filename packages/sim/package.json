@@ -1,0 +1,26 @@
+{
+  "name": "@tpw/sim",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "seed": "node src/seed.ts",
+    "evaluate": "node src/evaluate.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tpw/api": "workspace:*",
+    "@tpw/domain": "workspace:*",
+    "pg": "^8.23.1",
+    "pg-copy-streams": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/pg": "^8.23.1",
+    "@types/pg-copy-streams": "^1.2.5"
+  }
+}

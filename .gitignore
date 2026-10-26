@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.local
+apps/web/dist/
+cypress/videos/
+cypress/screenshots/
+.turbo/
+data/

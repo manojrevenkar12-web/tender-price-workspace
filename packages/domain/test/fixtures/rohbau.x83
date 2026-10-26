@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GAEB xmlns="http://www.gaeb.de/GAEB_DA_XML/DA83/3.3">
+  <GAEBInfo><Version>3.3</Version><ProgSystem>Example AVA</ProgSystem></GAEBInfo>
+  <Award>
+    <DP>83</DP>
+    <BoQ>
+      <BoQInfo>
+        <Name>Rohbau Wohnanlage Lindenhof</Name>
+        <BoQBkdn><Type>BoQLevel</Type><Length>2</Length></BoQBkdn>
+        <BoQBkdn><Type>Item</Type><Length>4</Length></BoQBkdn>
+      </BoQInfo>
+      <BoQBody>
+        <BoQCtgy RNoPart="01">
+          <LblTx><p><span>Erdarbeiten</span></p></LblTx>
+          <BoQBody>
+            <Itemlist>
+              <Item RNoPart="0010">
+                <LumpSumItem>Yes</LumpSumItem>
+                <Description><CompleteText>
+                  <DetailTxt><Text><p><span>Baustelleneinrichtung vorhalten und räumen.</span></p></Text></DetailTxt>
+                  <OutlineText><OutlTxt><TextOutlTxt><p><span>Baustelleneinrichtung</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                </CompleteText></Description>
+              </Item>
+              <Item RNoPart="0020">
+                <Qty>850.000</Qty><QU>m3</QU>
+                <Description><CompleteText>
+                  <DetailTxt><Text><p><span>Boden der </span><span>Bodenklasse 3-5</span><span> lösen,</span></p><p><span>laden und abfahren.</span></p></Text></DetailTxt>
+                  <OutlineText><OutlTxt><TextOutlTxt><p><span>Bodenaushub BK 3-5</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                </CompleteText></Description>
+              </Item>
+            </Itemlist>
+          </BoQBody>
+        </BoQCtgy>
+        <BoQCtgy RNoPart="02">
+          <LblTx><p><span>Beton- und Stahlbetonarbeiten</span></p></LblTx>
+          <BoQBody>
+            <Itemlist>
+              <Item RNoPart="0010">
+                <Qty>412.500</Qty><QU>m²</QU>
+                <Description><CompleteText>
+                  <DetailTxt><Text><p><span>Stahlbetonwand C30/37, d=24 cm, Sichtbetonklasse SB2.</span></p></Text></DetailTxt>
+                  <OutlineText><OutlTxt><TextOutlTxt><p><span>Stb.-Wand C30/37, d=24cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                </CompleteText></Description>
+              </Item>
+              <Item RNoPart="0020">
+                <Qty>38.500</Qty><QU>t</QU>
+                <Description><CompleteText>
+                  <DetailTxt><Text><p><span>Betonstahl B500B liefern, schneiden, biegen und verlegen.</span></p></Text></DetailTxt>
+                  <OutlineText><OutlTxt><TextOutlTxt><p><span>Bewehrung B500B</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                </CompleteText></Description>
+              </Item>
+              <Item RNoPart="0030">
+                <Qty>40.000</Qty><QU>m²</QU><Provis>WithoutTotal</Provis>
+                <Description><CompleteText>
+                  <DetailTxt><Text><p><span>Zulage für Sichtbeton SB3, nur auf Anordnung.</span></p></Text></DetailTxt>
+                  <OutlineText><OutlTxt><TextOutlTxt><p><span>Zulage Sichtbeton SB3 (Eventualposition)</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                </CompleteText></Description>
+              </Item>
+              <Item RNoPart="0040">
+                <Qty>412.500</Qty><QU>m²</QU><ALNGroupNo>1</ALNGroupNo><ALNSerNo>1</ALNSerNo>
+                <Description><CompleteText>
+                  <DetailTxt><Text><p><span>Alternativ: Wand aus Betonfertigteilen d=24 cm.</span></p></Text></DetailTxt>
+                  <OutlineText><OutlTxt><TextOutlTxt><p><span>Alternative Fertigteilwand d=24 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                </CompleteText></Description>
+              </Item>
+            </Itemlist>
+          </BoQBody>
+        </BoQCtgy>
+      </BoQBody>
+    </BoQ>
+  </Award>
+</GAEB>
