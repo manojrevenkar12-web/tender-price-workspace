@@ -97,7 +97,13 @@ jobs:
         run: |
           for f in seed.log cypress.log api.log web.log; do
             [ -f "$f" ] || continue
-            body=$(grep -vE '^\s*$' "$f" | tail -60 | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
+            clean=$(sed 's/\x1b\[[0-9;]*m//g' "$f" | grep -vE '^\s*$|─')
+            if [ "$f" = cypress.log ]; then
+              picked=$(echo "$clean" | grep -E -A6 'failing|Error|Timed out|expected|^\s+[0-9]+\) |✖' | head -150)
+            else
+              picked=$(echo "$clean" | grep -vE '"level":30' | tail -40)
+            fi
+            body=$(echo "$picked" | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
             echo "::error title=$f::$body"
           done
       - name: Evaluation (accuracy against the simulation's truth)
