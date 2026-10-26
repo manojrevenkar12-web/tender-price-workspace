@@ -1,0 +1,33 @@
+.strip {
+  display: block;
+  overflow: visible;
+}
+.axis {
+  stroke: var(--color-line);
+  stroke-width: 1;
+}
+.band {
+  fill: var(--color-market-tint);
+  stroke: var(--color-market);
+  stroke-width: 1;
+}
+.median {
+  stroke: var(--color-market-deep);
+  stroke-width: 2;
+}
+.dot {
+  fill: var(--color-ink-soft);
+  stroke: var(--color-surface);
+  stroke-width: 1;
+}
+.dotFlag {
+  fill: var(--color-alert);
+}
+.dotStale {
+  fill: var(--color-stale);
+}
+.dotActive {
+  fill: var(--color-ink);
+  stroke: var(--color-market);
+  stroke-width: 2;
+}

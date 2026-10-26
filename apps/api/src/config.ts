@@ -9,6 +9,7 @@ export interface Config {
   corsOrigin: string;
   runWorker: boolean;
   anthropicApiKey: string | undefined;
+  demoMode: boolean;
 }
 
 function env(name: string, fallback?: string): string {
@@ -28,5 +29,6 @@ export function loadConfig(): Config {
     corsOrigin: env("CORS_ORIGIN", "http://localhost:5173"),
     runWorker: env("RUN_WORKER", "true") === "true",
     anthropicApiKey: process.env["ANTHROPIC_API_KEY"] || undefined,
+    demoMode: env("DEMO_MODE", "false") === "true",
   };
 }

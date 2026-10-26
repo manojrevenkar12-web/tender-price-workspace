@@ -112,6 +112,11 @@ interface Candidate {
   sim: number;
 }
 
+function describe(words: string, attributes: Record<string, string>): string {
+  const attrs = Object.entries(attributes).map(([k, v]) => `${k.replace(/_/g, " ")} ${v}`);
+  return attrs.length ? `${words} (${attrs.join(", ")})` : words;
+}
+
 /** Inverse document frequency of words over the price history, cached for ten minutes. */
 let vocabulary: { at: number; df: Map<string, number>; n: number } | null = null;
 
@@ -203,7 +208,8 @@ export async function priceMany(db: Db, queries: readonly PriceQuery[]): Promise
         const score = wordScore(t.n.words, c.norm_words.split(" "), weightOf);
         return {
           id: c.id,
-          sample: c.sample,
+          // What the match is, normalised: other customers' raw position texts are never shown.
+          sample: describe(c.norm_words, c.attributes),
           sim: score,
           weight: score >= MATCH.minScore ? score * score * attributeFit(t.n.attributes, c.attributes) : 0,
         };
@@ -257,13 +263,11 @@ export async function priceMany(db: Db, queries: readonly PriceQuery[]): Promise
       }
     }
     const b = benchmark(points, adj, DEFAULT_RULE);
-    const matches = sigs
-      .slice(0, 5)
-      .map((s) => ({
-        text: s.sample,
-        similarity: Math.round(s.sim * 100) / 100,
-        weight: Math.round(s.weight * 100) / 100,
-      }));
+    const matches = sigs.slice(0, 5).map((s) => ({
+      text: s.sample,
+      similarity: Math.round(s.sim * 100) / 100,
+      weight: Math.round(s.weight * 100) / 100,
+    }));
     if (b.status === "ok") {
       // Back from the base unit (per kg) to the unit the position is written in (per t).
       const f = priceConversion(t.base!, t.unit!)!;

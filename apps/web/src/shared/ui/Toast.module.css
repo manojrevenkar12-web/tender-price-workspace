@@ -1,0 +1,20 @@
+.stack {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  display: grid;
+  gap: var(--space-2);
+  z-index: 60;
+}
+.toast {
+  min-width: 18rem;
+  max-width: 26rem;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  box-shadow: var(--shadow-raised);
+}
+.error {
+  background: var(--color-alert);
+}

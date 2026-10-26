@@ -1,0 +1,37 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--color-scrim);
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+  z-index: 50;
+}
+.dialog {
+  width: min(44rem, 100%);
+  max-height: calc(100vh - var(--space-7));
+  overflow: auto;
+  background: var(--color-surface);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-raised);
+}
+.header {
+  padding: var(--space-5) var(--space-5) var(--space-3);
+}
+.title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+}
+.body {
+  padding: 0 var(--space-5) var(--space-5);
+  display: grid;
+  gap: var(--space-4);
+}
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--color-line);
+  background: var(--color-surface-sunk);
+}

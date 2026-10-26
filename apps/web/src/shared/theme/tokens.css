@@ -1,0 +1,87 @@
+/*
+ * Design tokens. Every colour, size, radius and duration in the app comes from here
+ * (tokens.ts mirrors the numbers motion code needs). The palette is mineral: concrete greys
+ * with a verdigris accent for market ranges, ochre for prices that no longer stand, and
+ * brick red for prices that look wrong.
+ */
+:root {
+  /* colour */
+  --color-paper: #edf0ee;
+  --color-surface: #ffffff;
+  --color-surface-sunk: #f5f7f6;
+  --color-ink: #14211c;
+  --color-ink-soft: #33413b;
+  --color-muted: #5e6b66;
+  --color-line: #cdd5d1;
+  --color-line-strong: #a9b5b0;
+  --color-market: #8bb8a8;
+  --color-market-tint: #e1eee9;
+  --color-market-deep: #2f6b57;
+  --color-stale: #8a6d00;
+  --color-stale-tint: #f6efd4;
+  --color-alert: #b42318;
+  --color-alert-tint: #fbe7e4;
+  --color-caution: #c2540c;
+  --color-caution-tint: #fdeee2;
+  --color-ok: #2f6b57;
+  --color-focus: #2f6b57;
+  --color-scrim: rgb(20 33 28 / 0.42);
+
+  /* type: one family (Archivo); its width axis separates dense data from reading text */
+  --font-family: "Archivo Variable", "Archivo", system-ui, sans-serif;
+  --font-width-condensed: 78;
+  --font-width-normal: 100;
+  --font-width-wide: 118;
+  --text-xs: 0.75rem; /* 12 */
+  --text-sm: 0.8125rem; /* 13 */
+  --text-md: 0.875rem; /* 14: base for data screens */
+  --text-lg: 1rem; /* 16 */
+  --text-xl: 1.25rem; /* 20 */
+  --text-2xl: 1.75rem; /* 28 */
+  --text-3xl: 2.625rem; /* 42 */
+  --leading-tight: 1.15;
+  --leading-normal: 1.45;
+  --weight-regular: 400;
+  --weight-medium: 520;
+  --weight-bold: 680;
+  --weight-heavy: 780;
+  --tracking-tight: -0.01em;
+
+  /* space: 4 px grid */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+
+  /* radius by hierarchy: controls are tight, panels softer */
+  --radius-control: 4px;
+  --radius-panel: 10px;
+  --radius-pill: 999px;
+
+  /* layout */
+  --rail-width: 15rem;
+  --content-max: 88rem;
+  --grid-row-height: 2.5rem;
+  --grid-sticky-width: 42rem;
+  --grid-bid-width: 8.5rem;
+
+  /* motion */
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+  --duration-slow: 420ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --shadow-raised: 0 1px 0 var(--color-line), 0 8px 24px -16px rgb(20 33 28 / 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}

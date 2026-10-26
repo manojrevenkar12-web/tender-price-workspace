@@ -77,7 +77,7 @@ describe("price check", () => {
     expect(r).toMatchObject({ status: "ok", companies: 6, signatures: 1 });
     expect(r.p50).toBeGreaterThan(9_900);
     expect(r.p50).toBeLessThan(10_500);
-    expect(r.matches[0].text).toBe("Stb.-Wand d=24 cm");
+    expect(r.matches[0].text).toBe("stahlbeton wand (thickness mm 240)"); // normalised, never another customer's raw text
   });
 
   it("converts the unit the position is written in", async () => {

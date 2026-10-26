@@ -1,0 +1,29 @@
+.block {
+  display: block;
+  border-radius: var(--radius-control);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-sunk) 0%,
+    var(--color-line) 50%,
+    var(--color-surface-sunk) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+.rows {
+  display: grid;
+  gap: var(--space-2);
+}
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .block {
+    animation: none;
+  }
+}

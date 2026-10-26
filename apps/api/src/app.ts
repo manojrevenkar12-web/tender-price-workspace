@@ -35,7 +35,7 @@ declare module "fastify" {
 
 export interface AppDeps {
   pool: pg.Pool;
-  config: Pick<Config, "tokenSecret" | "corsOrigin">;
+  config: Pick<Config, "tokenSecret" | "corsOrigin"> & { demoMode?: boolean };
   hub?: EventHub | undefined;
   explainer?: Explainer | undefined;
   logger?: boolean;
@@ -120,15 +120,13 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       reply,
     ) => {
       if (err instanceof HttpError) {
-        return reply
-          .status(err.status)
-          .send({
-            error: err.code,
-            message: err.message,
-            ...((err as { details?: unknown }).details
-              ? { details: (err as { details?: unknown }).details }
-              : {}),
-          });
+        return reply.status(err.status).send({
+          error: err.code,
+          message: err.message,
+          ...((err as { details?: unknown }).details
+            ? { details: (err as { details?: unknown }).details }
+            : {}),
+        });
       }
       if (err.validation || err.code === "FST_ERR_VALIDATION")
         return reply.status(400).send({ error: "invalid_request", message: err.message });
@@ -193,6 +191,16 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       token: sign(s, deps.config.tokenSecret),
       user: { id: u.id, name: u.name, email: u.email, org: u.org, orgId: u.org_id, kind: u.kind },
     };
+  });
+
+  // Demo sign-in helper: lists the seeded users. Off unless DEMO_MODE=true.
+  app.get("/api/demo-users", async () => {
+    if (!deps.config.demoMode) throw new HttpError(404, "not_found", "not available");
+    const r = await pool.query(
+      `SELECT u.email, u.name, o.name AS org, o.kind FROM users u JOIN organizations o ON o.id = u.org_id
+        ORDER BY o.kind, o.created_at, u.created_at LIMIT 40`,
+    );
+    return r.rows;
   });
 
   app.get("/api/me", async (req) => {
