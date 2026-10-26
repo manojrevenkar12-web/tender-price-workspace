@@ -79,7 +79,9 @@ jobs:
         run: pnpm --filter @tpw/web exec cypress install
         env: { CYPRESS_INSTALL_BINARY: "" }
       - name: Seed (history, demo companies and tenders)
-        run: pnpm db:seed --tenders 8000 --summary ${{ github.workspace }}/apps/web/cypress/fixtures/demo.json
+        run: |
+          set -o pipefail
+          pnpm db:seed --tenders 8000 --summary ${{ github.workspace }}/apps/web/cypress/fixtures/demo.json 2>&1 | tee seed.log
       - name: Start the API and the web app
         run: |
           (cd apps/api && nohup node src/server.ts > ../../api.log 2>&1 &)
@@ -87,7 +89,17 @@ jobs:
           (cd apps/web && nohup npx vite preview --port 4173 --strictPort > ../../web.log 2>&1 &)
           npx --yes wait-on@8 -t 60000 http-get://localhost:4173/api/health http-get://localhost:4173/
       - name: Cypress
-        run: pnpm --filter @tpw/web exec cypress run --browser electron
+        run: |
+          set -o pipefail
+          pnpm --filter @tpw/web exec cypress run --browser electron 2>&1 | tee cypress.log
+      - name: Report failures as annotations
+        if: failure()
+        run: |
+          for f in seed.log cypress.log api.log web.log; do
+            [ -f "$f" ] || continue
+            body=$(grep -vE '^\s*$' "$f" | tail -60 | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=$f::$body"
+          done
       - name: Evaluation (accuracy against the simulation's truth)
         run: pnpm --filter @tpw/sim evaluate
       - if: failure()
@@ -95,6 +107,7 @@ jobs:
         with:
           name: e2e-logs
           path: |
+            cypress.log
             api.log
             web.log
             apps/web/cypress/screenshots
