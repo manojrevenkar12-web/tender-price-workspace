@@ -75,7 +75,12 @@ export function MarketDrawer({
                     {(["p10", "p25", "p50", "p75", "p90"] as const).map((k) => (
                       <div key={k} className={styles.q}>
                         <span>{k === "p50" ? "median" : `${k.slice(1)}th pct.`}</span>
-                        <strong className={k === "p50" ? styles.median : ""}>{formatCents(q.data[k])}</strong>
+                        <strong
+                          className={k === "p50" ? styles.median : ""}
+                          data-cy={k === "p50" ? "median" : undefined}
+                        >
+                          {formatCents(q.data[k])}
+                        </strong>
                       </div>
                     ))}
                   </div>

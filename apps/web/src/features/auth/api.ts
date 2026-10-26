@@ -16,6 +16,8 @@ export const useDemoUsers = () =>
 
 export const useSignIn = () =>
   useMutation({
-    mutationFn: (email: string) => api.post<{ token: string; user: User }>("/api/session", { email }),
+    // Demo users sign in by e-mail alone (only a demo deployment allows that); everyone else with a password.
+    mutationFn: (c: { email: string; password?: string }) =>
+      api.post<{ token: string; user: User }>("/api/session", c),
     onSuccess: (s) => session.set(s),
   });

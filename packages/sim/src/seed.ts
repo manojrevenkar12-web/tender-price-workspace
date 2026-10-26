@@ -1,10 +1,10 @@
 /**
- * pnpm db:seed [--tenders 24000] [--no-large] [--keep-history]
+ * pnpm db:seed [--tenders 24000] [--no-large] [--keep-history] [--summary demo.json]
  *
  * Migrates, loads the price history (about two million unit prices), the price index and the
  * regional price levels, then the demo companies and tenders.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
 import { createPool, loadConfig, migrate, pricing, withSystem } from "@tpw/api";
 
@@ -52,6 +52,11 @@ await withSystem(app, async (db) => {
 const demo = await loadDemo(admin, app, { large: !args.includes("--no-large") });
 console.log(`demo: ${Object.keys(demo.tenders).length} tenders, ${demo.subs.length} subcontractors`);
 console.log(`sign in as ${demo.contractor.email} (buyer) or ${demo.subs[1]!.email} (bidder)`);
+const summary = arg("--summary");
+if (summary) {
+  const { subs: _s, ...rest } = demo;
+  writeFileSync(summary, JSON.stringify(rest, null, 2));
+}
 console.log(`done in ${((Date.now() - t0) / 1000).toFixed(0)} s`);
 await admin.end();
 await app.end();

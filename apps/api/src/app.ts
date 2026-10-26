@@ -16,7 +16,7 @@ import {
 import type pg from "pg";
 import { z } from "zod";
 
-import { type Session, sign, verify } from "./auth.ts";
+import { checkPassword, DUMMY_HASH, type Session, sign, verify } from "./auth.ts";
 import type { Config } from "./config.ts";
 import { withOrg } from "./db.ts";
 import * as bids from "./services/bids.ts";
@@ -173,25 +173,35 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     return reply.type("text/plain").send(lines.join("\n") + "\n");
   });
 
-  app.post("/api/session", { schema: { body: z.object({ email: z.email() }) } }, async (req) => {
-    const r = await pool.query(
-      "SELECT u.id, u.name, u.email, o.id AS org_id, o.kind, o.name AS org FROM users u JOIN organizations o ON o.id = u.org_id WHERE lower(u.email) = lower($1)",
-      [req.body.email],
-    );
-    const u = r.rows[0];
-    if (!u) throw new HttpError(401, "unknown_user", "no user with that e-mail");
-    const s: Session = {
-      userId: u.id,
-      orgId: u.org_id,
-      kind: u.kind,
-      name: u.name,
-      exp: Date.now() + 12 * 3600 * SEC,
-    };
-    return {
-      token: sign(s, deps.config.tokenSecret),
-      user: { id: u.id, name: u.name, email: u.email, org: u.org, orgId: u.org_id, kind: u.kind },
-    };
-  });
+  app.post(
+    "/api/session",
+    { schema: { body: z.object({ email: z.email(), password: z.string().max(200).optional() }) } },
+    async (req) => {
+      const r = await pool.query(
+        "SELECT u.id, u.name, u.email, u.password_hash, o.id AS org_id, o.kind, o.name AS org FROM users u JOIN organizations o ON o.id = u.org_id WHERE lower(u.email) = lower($1)",
+        [req.body.email],
+      );
+      const u = r.rows[0];
+      const { password } = req.body;
+      // One answer for an unknown e-mail and a wrong password, and the same work for both.
+      const ok =
+        password !== undefined
+          ? checkPassword(password, u?.password_hash ?? DUMMY_HASH) && Boolean(u?.password_hash)
+          : Boolean(u) && deps.config.demoMode === true;
+      if (!ok || !u) throw new HttpError(401, "invalid_credentials", "e-mail or password is not right");
+      const s: Session = {
+        userId: u.id,
+        orgId: u.org_id,
+        kind: u.kind,
+        name: u.name,
+        exp: Date.now() + 12 * 3600 * SEC,
+      };
+      return {
+        token: sign(s, deps.config.tokenSecret),
+        user: { id: u.id, name: u.name, email: u.email, org: u.org, orgId: u.org_id, kind: u.kind },
+      };
+    },
+  );
 
   // Demo sign-in helper: lists the seeded users. Off unless DEMO_MODE=true.
   app.get("/api/demo-users", async () => {

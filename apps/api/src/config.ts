@@ -18,17 +18,25 @@ function env(name: string, fallback?: string): string {
   return v;
 }
 
+const DEV_SECRET = "dev-only-secret-change-me";
+
 export function loadConfig(): Config {
-  return {
+  const config: Config = {
     databaseUrl: env("DATABASE_URL", "postgres://tpw_app:tpw_app@localhost:5432/tpw"),
     migrationDatabaseUrl: env("MIGRATION_DATABASE_URL", "postgres://postgres:postgres@localhost:5432/tpw"),
     appRolePassword: env("APP_DB_PASSWORD", "tpw_app"),
     port: Number(env("PORT", "4000")),
     host: env("HOST", "0.0.0.0"),
-    tokenSecret: env("TOKEN_SECRET", "dev-only-secret-change-me"),
+    tokenSecret: env("TOKEN_SECRET", DEV_SECRET),
     corsOrigin: env("CORS_ORIGIN", "http://localhost:5173"),
     runWorker: env("RUN_WORKER", "true") === "true",
     anthropicApiKey: process.env["ANTHROPIC_API_KEY"] || undefined,
     demoMode: env("DEMO_MODE", "false") === "true",
   };
+  if (
+    process.env["NODE_ENV"] === "production" &&
+    (config.tokenSecret === DEV_SECRET || config.tokenSecret.length < 32)
+  )
+    throw new Error("TOKEN_SECRET must be set to at least 32 characters in production");
+  return config;
 }

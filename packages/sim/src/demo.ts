@@ -203,6 +203,8 @@ export interface DemoResult {
   otherContractor: { id: string; email: string };
   subs: DemoOrg[];
   tenders: Record<string, string>;
+  roles: Record<string, string>;
+  slipOz: string;
 }
 
 export async function loadDemo(
@@ -387,6 +389,12 @@ export async function loadDemo(
   );
   await as(rohbauSubs[6]!.id, (db) => bids.view(db, rohbauSubs[6]!.id, t1));
 
+  const roles: Record<string, string> = {
+    bidBeforeAddendum: rohbauSubs[0]!.email,
+    bidAfterAddendum: rohbauSubs[3]!.email,
+    viewedOnly: rohbauSubs[6]!.email,
+  };
+
   // 2. Trockenbau Kita: open, one bid so far.
   const tb = makeBoq(r, ["drywall", "painting"], 18);
   const t2 = await tender("trockenbau", kita, "Trockenbau und Maler Kita", "drywall", tb);
@@ -402,6 +410,7 @@ export async function loadDemo(
     ),
   );
   await priceAll(tbSubs[0]!, t2, tb, "BB", quarter(d2));
+  roles["invitedNotStarted"] = tbSubs.find((s) => !rohbauSubs.includes(s))?.email ?? tbSubs[1]!.email;
 
   // 3. Fliesen Haus B: a draft.
   await tender("fliesen", spree, "Fliesenarbeiten Haus B", "tiling", makeBoq(r, ["tiling"], 12));
@@ -471,5 +480,8 @@ export async function loadDemo(
     otherContractor: { id: other, email: "lea.schmidt@elbtal-projektbau.example" },
     subs,
     tenders: ids,
+    /** Who to sign in as to see each state (the browser tests read this). */
+    roles,
+    slipOz: slip.oz,
   };
 }

@@ -23,7 +23,7 @@ export async function start(): Promise<Ctx> {
   const app = await buildApp({
     pool,
     hub,
-    config: { tokenSecret: "test-secret", corsOrigin: "http://localhost" },
+    config: { tokenSecret: "test-secret", corsOrigin: "http://localhost", demoMode: true },
   });
   return { admin, pool, app, hub };
 }

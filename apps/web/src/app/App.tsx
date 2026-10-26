@@ -1,15 +1,33 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 
+import { lazy, Suspense, type ReactNode } from "react";
+
 import { LoginPage } from "../features/auth/LoginPage";
-import { BidPage } from "../features/bidding/BidPage";
-import { InvitationsPage } from "../features/bidding/InvitationsPage";
-import { PriceCheckPage } from "../features/pricecheck/PriceCheckPage";
-import { TenderListPage } from "../features/tenders/TenderListPage";
-import { TenderPage } from "../features/tenders/TenderPage";
 import { ApiError } from "../shared/api/client";
-import { ToastProvider } from "../shared/ui";
+import { SkeletonRows, ToastProvider } from "../shared/ui";
 import { Layout, RequireRole } from "./Layout";
+
+// Each role loads only its own screens: a bidder never downloads the buyer's comparison grid.
+const TenderListPage = lazy(() =>
+  import("../features/tenders/TenderListPage").then((m) => ({ default: m.TenderListPage })),
+);
+const TenderPage = lazy(() =>
+  import("../features/tenders/TenderPage").then((m) => ({ default: m.TenderPage })),
+);
+const PriceCheckPage = lazy(() =>
+  import("../features/pricecheck/PriceCheckPage").then((m) => ({ default: m.PriceCheckPage })),
+);
+const InvitationsPage = lazy(() =>
+  import("../features/bidding/InvitationsPage").then((m) => ({ default: m.InvitationsPage })),
+);
+const BidPage = lazy(() => import("../features/bidding/BidPage").then((m) => ({ default: m.BidPage })));
+
+const screen = (role: "contractor" | "subcontractor", page: ReactNode) => (
+  <RequireRole role={role}>
+    <Suspense fallback={<SkeletonRows rows={8} label="Loading" />}>{page}</Suspense>
+  </RequireRole>
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,46 +44,11 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Navigate to="/tenders" replace /> },
-      {
-        path: "tenders",
-        element: (
-          <RequireRole role="contractor">
-            <TenderListPage />
-          </RequireRole>
-        ),
-      },
-      {
-        path: "tenders/:id",
-        element: (
-          <RequireRole role="contractor">
-            <TenderPage />
-          </RequireRole>
-        ),
-      },
-      {
-        path: "price-check",
-        element: (
-          <RequireRole role="contractor">
-            <PriceCheckPage />
-          </RequireRole>
-        ),
-      },
-      {
-        path: "bids",
-        element: (
-          <RequireRole role="subcontractor">
-            <InvitationsPage />
-          </RequireRole>
-        ),
-      },
-      {
-        path: "bids/:id",
-        element: (
-          <RequireRole role="subcontractor">
-            <BidPage />
-          </RequireRole>
-        ),
-      },
+      { path: "tenders", element: screen("contractor", <TenderListPage />) },
+      { path: "tenders/:id", element: screen("contractor", <TenderPage />) },
+      { path: "price-check", element: screen("contractor", <PriceCheckPage />) },
+      { path: "bids", element: screen("subcontractor", <InvitationsPage />) },
+      { path: "bids/:id", element: screen("subcontractor", <BidPage />) },
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },

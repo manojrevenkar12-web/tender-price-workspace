@@ -13,11 +13,12 @@ export function LoginPage() {
   const users = useDemoUsers();
   const signIn = useSignIn();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   if (s) return <Navigate to={s.user.kind === "contractor" ? "/tenders" : "/bids"} replace />;
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (email) signIn.mutate(email);
+    if (email) signIn.mutate({ email, password });
   };
   const buyers = users.data?.filter((u) => u.kind === "contractor") ?? [];
   const bidders = users.data?.filter((u) => u.kind === "subcontractor").slice(0, 4) ?? [];
@@ -53,7 +54,7 @@ export function LoginPage() {
                   name={u.name}
                   org={u.org}
                   email={u.email}
-                  onPick={() => signIn.mutate(u.email)}
+                  onPick={() => signIn.mutate({ email: u.email })}
                 />
               ))}
             </div>
@@ -65,7 +66,7 @@ export function LoginPage() {
                   name={u.name}
                   org={u.org}
                   email={u.email}
-                  onPick={() => signIn.mutate(u.email)}
+                  onPick={() => signIn.mutate({ email: u.email })}
                 />
               ))}
             </div>
@@ -81,7 +82,20 @@ export function LoginPage() {
             type="email"
             placeholder="name@company.example"
             value={email}
+            autoComplete="username"
             onChange={(e) => setEmail(e.target.value)}
+          />
+          <label className="visually-hidden" htmlFor="password">
+            Password
+          </label>
+          <input
+            id="password"
+            className={styles.input}
+            type="password"
+            placeholder="Password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <Button type="submit" variant="primary" busy={signIn.isPending}>
             Sign in

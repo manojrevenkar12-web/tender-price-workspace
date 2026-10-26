@@ -72,8 +72,14 @@
   color: var(--color-muted);
 }
 .manual {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   gap: var(--space-2);
+}
+@media (max-width: 640px) {
+  .manual {
+    grid-template-columns: 1fr;
+  }
 }
 .input {
   flex: 1;
