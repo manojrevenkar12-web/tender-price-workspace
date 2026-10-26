@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tpw
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    # Server-sent events stay open; the ALB must not cut them at 60 s.
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=3600
+spec:
+  ingressClassName: alb
+  rules:
+    - host: tenders.example
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: tpw-web, port: { name: http } } }

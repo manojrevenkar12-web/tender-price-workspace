@@ -1,0 +1,14 @@
+# Non-secret settings. Secrets (DATABASE_URL, MIGRATION_DATABASE_URL, APP_DB_PASSWORD,
+# TOKEN_SECRET, METRICS_TOKEN, ANTHROPIC_API_KEY) come from the Secret "tpw-secrets", which the
+# production overlay fills from AWS Secrets Manager.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tpw-config
+data:
+  NODE_ENV: production
+  PORT: "4000"
+  CORS_ORIGIN: https://tenders.example
+  DEMO_MODE: "false"
+  RUN_WORKER: "false"
+  WORKER_HEALTH_PORT: "4001"

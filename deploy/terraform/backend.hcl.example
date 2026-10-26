@@ -1,0 +1,5 @@
+bucket         = "tpw-terraform-state"
+key            = "production/terraform.tfstate"
+region         = "eu-central-1"
+dynamodb_table = "tpw-terraform-locks"
+encrypt        = true

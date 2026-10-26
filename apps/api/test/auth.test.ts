@@ -31,7 +31,10 @@ describe("sign-in outside a demo deployment", () => {
   let prod: Awaited<ReturnType<typeof buildApp>>;
   beforeAll(async () => {
     c = await start();
-    prod = await buildApp({ pool: c.pool, config: { tokenSecret: "s", corsOrigin: "x", demoMode: false } });
+    prod = await buildApp({
+      pool: c.pool,
+      config: { tokenSecret: "s", corsOrigin: "x", demoMode: false, metricsToken: "scrape" },
+    });
   });
   afterAll(async () => {
     await prod.close();
@@ -66,5 +69,12 @@ describe("sign-in outside a demo deployment", () => {
     expect((await signIn({ email: "sso@a.example" })).statusCode).toBe(401);
     expect((await signIn({ email: "sso@a.example", password: "" })).statusCode).toBe(401);
     expect((await prod.inject({ url: "/api/demo-users" })).statusCode).toBe(404);
+  });
+
+  it("keeps metrics behind the scrape token", async () => {
+    expect((await prod.inject({ url: "/api/metrics" })).statusCode).toBe(401);
+    const ok = await prod.inject({ url: "/api/metrics", headers: { authorization: "Bearer scrape" } });
+    expect(ok.statusCode).toBe(200);
+    expect(ok.body).toContain("tpw_http_requests_total");
   });
 });

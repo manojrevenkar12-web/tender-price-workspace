@@ -35,7 +35,10 @@ declare module "fastify" {
 
 export interface AppDeps {
   pool: pg.Pool;
-  config: Pick<Config, "tokenSecret" | "corsOrigin"> & { demoMode?: boolean };
+  config: Pick<Config, "tokenSecret" | "corsOrigin"> & {
+    demoMode?: boolean;
+    metricsToken?: string | undefined;
+  };
   hub?: EventHub | undefined;
   explainer?: Explainer | undefined;
   logger?: boolean;
@@ -156,7 +159,11 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     return { ok: true };
   });
 
-  app.get("/api/metrics", async (_req, reply) => {
+  app.get("/api/metrics", async (req, reply) => {
+    // Prometheus scrapes with a bearer token; without METRICS_TOKEN the endpoint is open (local runs).
+    const want = deps.config.metricsToken;
+    if (want && req.headers.authorization !== `Bearer ${want}`)
+      throw new HttpError(401, "unauthorised", "metrics need a token");
     const d = [...metrics.durationsMs].sort((a, b) => a - b);
     const q = (p: number) => (d.length ? d[Math.min(d.length - 1, Math.floor(p * d.length))]! : 0);
     const jobs = await pool.query<{ status: string; n: number }>(

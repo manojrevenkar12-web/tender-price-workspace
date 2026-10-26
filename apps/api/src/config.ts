@@ -10,6 +10,7 @@ export interface Config {
   runWorker: boolean;
   anthropicApiKey: string | undefined;
   demoMode: boolean;
+  metricsToken: string | undefined;
 }
 
 function env(name: string, fallback?: string): string {
@@ -32,6 +33,7 @@ export function loadConfig(): Config {
     runWorker: env("RUN_WORKER", "true") === "true",
     anthropicApiKey: process.env["ANTHROPIC_API_KEY"] || undefined,
     demoMode: env("DEMO_MODE", "false") === "true",
+    metricsToken: process.env["METRICS_TOKEN"] || undefined,
   };
   if (
     process.env["NODE_ENV"] === "production" &&

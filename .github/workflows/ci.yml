@@ -1,0 +1,154 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CYPRESS_INSTALL_BINARY: "0"
+
+jobs:
+  check:
+    name: lint, types, unit tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22.22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm --filter @tpw/web exec tsc -p cypress/tsconfig.json
+      - run: pnpm --filter @tpw/domain --filter @tpw/web --filter @tpw/sim test
+      - run: pnpm --filter @tpw/web build
+
+  api:
+    name: API and database tests
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env: { POSTGRES_PASSWORD: postgres }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 2s --health-retries 30
+    env:
+      TEST_ADMIN_URL: postgres://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22.22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @tpw/api test
+
+  e2e:
+    name: end-to-end (Cypress) on a seeded stack
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: tpw }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 2s --health-retries 30
+    env:
+      DATABASE_URL: postgres://tpw_app:tpw_app@localhost:5432/tpw
+      MIGRATION_DATABASE_URL: postgres://postgres:postgres@localhost:5432/tpw
+      DEMO_MODE: "true"
+      CORS_ORIGIN: http://localhost:4173
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22.22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Install the Cypress binary
+        run: pnpm --filter @tpw/web exec cypress install
+        env: { CYPRESS_INSTALL_BINARY: "" }
+      - name: Seed (history, demo companies and tenders)
+        run: pnpm db:seed --tenders 8000 --summary ${{ github.workspace }}/apps/web/cypress/fixtures/demo.json
+      - name: Start the API and the web app
+        run: |
+          (cd apps/api && nohup node src/server.ts > ../../api.log 2>&1 &)
+          pnpm --filter @tpw/web build
+          (cd apps/web && nohup npx vite preview --port 4173 --strictPort > ../../web.log 2>&1 &)
+          npx --yes wait-on@8 -t 60000 http-get://localhost:4173/api/health http-get://localhost:4173/
+      - name: Cypress
+        run: pnpm --filter @tpw/web exec cypress run --browser electron
+      - name: Evaluation (accuracy against the simulation's truth)
+        run: pnpm --filter @tpw/sim evaluate
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-logs
+          path: |
+            api.log
+            web.log
+            apps/web/cypress/screenshots
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation
+          path: reports/
+
+  infra:
+    name: Terraform and Kubernetes manifests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with: { terraform_version: 1.9.8 }
+      - run: terraform fmt -check -recursive
+        working-directory: deploy/terraform
+      - run: terraform init -backend=false -input=false && terraform validate
+        working-directory: deploy/terraform
+      - name: kustomize build and kubeconform
+        run: |
+          curl -sSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz
+          for o in deploy/k8s/base deploy/k8s/overlays/production; do
+            kubectl kustomize "$o" | ./kubeconform -strict -summary -ignore-missing-schemas -kubernetes-version 1.31.0
+          done
+
+  images:
+    name: container images
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          {
+            context: .,
+            target: api,
+            tags: "tpw-api:ci",
+            load: true,
+            cache-from: type=gha,
+            cache-to: "type=gha,mode=max",
+          }
+      - uses: docker/build-push-action@v6
+        with: { context: ., target: web, tags: "tpw-web:ci", load: true, cache-from: type=gha }
+      - name: Smoke-test the images against Postgres
+        run: |
+          docker network create tpw
+          docker run -d --name postgres --network tpw -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=tpw postgres:17
+          until docker exec postgres pg_isready -U postgres; do sleep 1; done
+          env="-e DATABASE_URL=postgres://tpw_app:tpw_app@postgres:5432/tpw -e MIGRATION_DATABASE_URL=postgres://postgres:postgres@postgres:5432/tpw -e TOKEN_SECRET=ci-smoke-secret-that-is-at-least-32-chars"
+          docker run --rm --network tpw $env tpw-api:ci node src/migrate.ts
+          docker run -d --name api --network tpw $env tpw-api:ci
+          docker run -d --name web --network tpw -p 8080:8080 -e API_UPSTREAM=http://api:4000 tpw-web:ci
+          npx --yes wait-on@8 -t 60000 http-get://localhost:8080/api/health
+          curl -fsS localhost:8080/ | grep -q '<div id="root">'
+          test "$(curl -s -o /dev/null -w '%{http_code}' localhost:8080/api/metrics)" = 404

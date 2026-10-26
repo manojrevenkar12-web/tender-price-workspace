@@ -1,0 +1,8 @@
+**/node_modules
+**/dist
+**/coverage
+.git
+apps/web/cypress/screenshots
+apps/web/cypress/videos
+apps/web/cypress/fixtures/demo.json
+*.log

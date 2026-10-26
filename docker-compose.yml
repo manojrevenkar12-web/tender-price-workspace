@@ -1,0 +1,64 @@
+# Local stack: Postgres, migrations, API, worker and the web app.
+#   docker compose up -d --build
+#   docker compose --profile demo run --rm seed      # 2M historical prices and the demo tenders
+# then open http://localhost:8080 and sign in as a demo user.
+name: tender-price-workspace
+
+x-api-env: &api-env
+  DATABASE_URL: postgres://tpw_app:${APP_DB_PASSWORD:-tpw_app}@postgres:5432/tpw
+  MIGRATION_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/tpw
+  APP_DB_PASSWORD: ${APP_DB_PASSWORD:-tpw_app}
+  TOKEN_SECRET: ${TOKEN_SECRET:-local-compose-secret-at-least-32-characters}
+  CORS_ORIGIN: http://localhost:8080
+  DEMO_MODE: ${DEMO_MODE:-true}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: tpw
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tpw"]
+      interval: 2s
+      retries: 30
+
+  migrate:
+    build: { context: ., target: api }
+    environment: *api-env
+    command: ["node", "src/migrate.ts"]
+    depends_on: { postgres: { condition: service_healthy } }
+
+  api:
+    build: { context: ., target: api }
+    environment:
+      <<: *api-env
+      RUN_WORKER: "false"
+    ports: ["4000:4000"]
+    depends_on: { migrate: { condition: service_completed_successfully } }
+
+  worker:
+    build: { context: ., target: api }
+    environment: *api-env
+    command: ["node", "src/worker.ts"]
+    depends_on: { migrate: { condition: service_completed_successfully } }
+
+  web:
+    build: { context: ., target: web }
+    environment:
+      API_UPSTREAM: http://api:4000
+    ports: ["8080:8080"]
+    depends_on: [api]
+
+  seed:
+    profiles: [demo]
+    build: { context: ., target: tools }
+    environment: *api-env
+    command: ["db:seed"]
+    depends_on: { migrate: { condition: service_completed_successfully } }
+
+volumes:
+  pgdata:

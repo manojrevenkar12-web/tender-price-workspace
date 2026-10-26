@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "node src/server.ts",
+    "worker": "node src/worker.ts",
     "migrate": "node src/migrate.ts",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run"

@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  - external-secret.yaml
+images:
+  - name: tpw-api
+    newName: 123456789012.dkr.ecr.eu-central-1.amazonaws.com/tpw-api
+    newTag: "0.1.0"
+  - name: tpw-web
+    newName: 123456789012.dkr.ecr.eu-central-1.amazonaws.com/tpw-web
+    newTag: "0.1.0"
+patches:
+  - target: { kind: Deployment, name: tpw-api }
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 3
+  - target: { kind: HorizontalPodAutoscaler, name: tpw-api }
+    patch: |
+      - op: replace
+        path: /spec/minReplicas
+        value: 3
