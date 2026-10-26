@@ -1,0 +1,611 @@
+{
+  "recordedAt": "2026-10-26T09:19:23.985Z",
+  "blind": {
+    "cases": 1328,
+    "answered": 1132,
+    "coverage": 0.8524096385542169,
+    "suppressed": {
+      "no_data": 196
+    },
+    "medianError": 0.01346923917000364,
+    "p90Error": 0.023660832087254814,
+    "within10": 1,
+    "within20": 1,
+    "truthInBand": 1,
+    "familyPrecision": 0.999195431363612,
+    "exactPrecision": 0.999195431363612,
+    "minCompanies": 11
+  },
+  "blindByFamily": [
+    {
+      "family": "excavation",
+      "cases": 32,
+      "answered": 32,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.02158273381294964,
+      "p90Error": 0.026378896882494004,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 171
+    },
+    {
+      "family": "backfill",
+      "cases": 16,
+      "answered": 16,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.022556390977443608,
+      "p90Error": 0.02654867256637168,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 171
+    },
+    {
+      "family": "gravel_base",
+      "cases": 48,
+      "answered": 12,
+      "coverage": 0.25,
+      "suppressed": {
+        "no_data": 36
+      },
+      "medianError": 0.015648662291771833,
+      "p90Error": 0.025717111770524232,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 171
+    },
+    {
+      "family": "rc_wall",
+      "cases": 192,
+      "answered": 164,
+      "coverage": 0.8541666666666666,
+      "suppressed": {
+        "no_data": 28
+      },
+      "medianError": 0.009020454834201498,
+      "p90Error": 0.022329511164755584,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 174
+    },
+    {
+      "family": "rc_slab",
+      "cases": 128,
+      "answered": 96,
+      "coverage": 0.75,
+      "suppressed": {
+        "no_data": 32
+      },
+      "medianError": 0.005970393391674164,
+      "p90Error": 0.013986013986013986,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 294
+    },
+    {
+      "family": "rc_column",
+      "cases": 32,
+      "answered": 24,
+      "coverage": 0.75,
+      "suppressed": {
+        "no_data": 8
+      },
+      "medianError": 0.01114121025724586,
+      "p90Error": 0.01797648599252571,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 412
+    },
+    {
+      "family": "foundation_slab",
+      "cases": 32,
+      "answered": 32,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.008746355685131196,
+      "p90Error": 0.012211495428681031,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 408
+    },
+    {
+      "family": "rebar",
+      "cases": 16,
+      "answered": 12,
+      "coverage": 0.75,
+      "suppressed": {
+        "no_data": 4
+      },
+      "medianError": 0.01217006480164375,
+      "p90Error": 0.013539174825519742,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 413
+    },
+    {
+      "family": "rebar_mesh",
+      "cases": 16,
+      "answered": 12,
+      "coverage": 0.75,
+      "suppressed": {
+        "no_data": 4
+      },
+      "medianError": 0.008312147274661473,
+      "p90Error": 0.009920117457281675,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 413
+    },
+    {
+      "family": "formwork_wall",
+      "cases": 16,
+      "answered": 16,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.0076468543621828295,
+      "p90Error": 0.013746803069053709,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 413
+    },
+    {
+      "family": "ks_wall",
+      "cases": 48,
+      "answered": 24,
+      "coverage": 0.5,
+      "suppressed": {
+        "no_data": 24
+      },
+      "medianError": 0.014731720502770645,
+      "p90Error": 0.020631369624658214,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 290
+    },
+    {
+      "family": "brick_wall",
+      "cases": 48,
+      "answered": 48,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.016926353547808543,
+      "p90Error": 0.020618556701030927,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 283
+    },
+    {
+      "family": "lintel",
+      "cases": 48,
+      "answered": 48,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.020655270655270654,
+      "p90Error": 0.0264161220043573,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 282
+    },
+    {
+      "family": "drywall_partition",
+      "cases": 48,
+      "answered": 36,
+      "coverage": 0.75,
+      "suppressed": {
+        "no_data": 12
+      },
+      "medianError": 0.018379281537176273,
+      "p90Error": 0.02385118335021641,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 277
+    },
+    {
+      "family": "suspended_ceiling",
+      "cases": 16,
+      "answered": 16,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.022556390977443608,
+      "p90Error": 0.026573426573426574,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 281
+    },
+    {
+      "family": "drywall_lining",
+      "cases": 16,
+      "answered": 12,
+      "coverage": 0.75,
+      "suppressed": {
+        "no_data": 4
+      },
+      "medianError": 0.02144160583941606,
+      "p90Error": 0.026641493601846023,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 281
+    },
+    {
+      "family": "screed",
+      "cases": 64,
+      "answered": 64,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.016343825665859565,
+      "p90Error": 0.024333177351427236,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 214
+    },
+    {
+      "family": "interior_plaster",
+      "cases": 32,
+      "answered": 32,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.014641867827463396,
+      "p90Error": 0.018599129402453504,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 220
+    },
+    {
+      "family": "exterior_plaster",
+      "cases": 16,
+      "answered": 16,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.014641867827463396,
+      "p90Error": 0.0779580530273051,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 11
+    },
+    {
+      "family": "floor_tiles",
+      "cases": 144,
+      "answered": 144,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.01573555813707889,
+      "p90Error": 0.0287266441682443,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 152
+    },
+    {
+      "family": "wall_tiles",
+      "cases": 32,
+      "answered": 24,
+      "coverage": 0.75,
+      "suppressed": {
+        "no_data": 8
+      },
+      "medianError": 0.017867849862093776,
+      "p90Error": 0.02266458808010553,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 0.9820628940708036,
+      "exactPrecision": 0.9820628940708036,
+      "minCompanies": 242
+    },
+    {
+      "family": "waterproofing",
+      "cases": 16,
+      "answered": 16,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.01813356921716055,
+      "p90Error": 0.022704837117472853,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 243
+    },
+    {
+      "family": "emulsion_paint",
+      "cases": 32,
+      "answered": 32,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.0075107296137339056,
+      "p90Error": 0.012833168805528134,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 279
+    },
+    {
+      "family": "primer",
+      "cases": 16,
+      "answered": 8,
+      "coverage": 0.5,
+      "suppressed": {
+        "no_data": 8
+      },
+      "medianError": 0.003215434083601286,
+      "p90Error": 0.01808785529715762,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 280
+    },
+    {
+      "family": "wallpaper",
+      "cases": 16,
+      "answered": 16,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.006535947712418301,
+      "p90Error": 0.013426736719206071,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 280
+    },
+    {
+      "family": "cable",
+      "cases": 48,
+      "answered": 36,
+      "coverage": 0.75,
+      "suppressed": {
+        "no_data": 12
+      },
+      "medianError": 0.020134228187919462,
+      "p90Error": 0.025239338555265448,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 289
+    },
+    {
+      "family": "socket",
+      "cases": 16,
+      "answered": 16,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.01662049861495845,
+      "p90Error": 0.02120141342756184,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 0.9834475666364388,
+      "exactPrecision": 0.9834475666364388,
+      "minCompanies": 289
+    },
+    {
+      "family": "distribution_board",
+      "cases": 16,
+      "answered": 8,
+      "coverage": 0.5,
+      "suppressed": {
+        "no_data": 8
+      },
+      "medianError": 0.02227098578090022,
+      "p90Error": 0.027601471210493767,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 289
+    },
+    {
+      "family": "drain_pipe",
+      "cases": 48,
+      "answered": 48,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.012314651922593617,
+      "p90Error": 0.017276194749831726,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 213
+    },
+    {
+      "family": "wc",
+      "cases": 16,
+      "answered": 8,
+      "coverage": 0.5,
+      "suppressed": {
+        "no_data": 8
+      },
+      "medianError": 0.01084607799945455,
+      "p90Error": 0.01609079656785617,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 213
+    },
+    {
+      "family": "washbasin",
+      "cases": 16,
+      "answered": 16,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.013605442176870748,
+      "p90Error": 0.018589262023879928,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 213
+    },
+    {
+      "family": "copper_pipe",
+      "cases": 48,
+      "answered": 48,
+      "coverage": 1,
+      "suppressed": {},
+      "medianError": 0.010823055625471936,
+      "p90Error": 0.019346230820547032,
+      "within10": 1,
+      "within20": 1,
+      "truthInBand": 1,
+      "familyPrecision": 1,
+      "exactPrecision": 1,
+      "minCompanies": 212
+    }
+  ],
+  "worstBlind": [
+    {
+      "family": "exterior_plaster",
+      "region": "BY",
+      "text": "Außenwandputz mineral., zweilagig, inkl. Gewebeeinlage",
+      "p50": 5200,
+      "truth": 5660,
+      "error": 0.081
+    },
+    {
+      "family": "exterior_plaster",
+      "region": "NW",
+      "text": "Außenwandputz mineral., zweilagig, inkl. Gewebeeinlage",
+      "p50": 4660,
+      "truth": 5054,
+      "error": 0.078
+    },
+    {
+      "family": "exterior_plaster",
+      "region": "BE",
+      "text": "Außenwandputz mineral., zweilagig, inkl. Gewebeeinlage",
+      "p50": 4810,
+      "truth": 5206,
+      "error": 0.076
+    },
+    {
+      "family": "exterior_plaster",
+      "region": "SN",
+      "text": "Außenwandputz mineral., zweilagig, inkl. Gewebeeinlage",
+      "p50": 4220,
+      "truth": 4549,
+      "error": 0.072
+    },
+    {
+      "family": "rc_wall",
+      "region": "BY",
+      "text": "Wand aus Stahlbeton, Betonfestigkeitsklasse C25/30, d=30 cm, ohne Schalung und Bewehrung",
+      "p50": 22200,
+      "truth": 23095,
+      "error": 0.039
+    },
+    {
+      "family": "floor_tiles",
+      "region": "BY",
+      "text": "Bodenfliesen Feinsteinzeug 60x60 cm, R9",
+      "p50": 11700,
+      "truth": 12149,
+      "error": 0.037
+    },
+    {
+      "family": "floor_tiles",
+      "region": "BY",
+      "text": "Bodenbelag aus Feinsteinzeugfliesen 60x60 cm, Bewertungsgruppe R9, liefern und verlegen",
+      "p50": 11700,
+      "truth": 12149,
+      "error": 0.037
+    },
+    {
+      "family": "rc_wall",
+      "region": "BE",
+      "text": "Wand aus Stahlbeton, Betonfestigkeitsklasse C25/30, d=30 cm, ohne Schalung und Bewehrung",
+      "p50": 20500,
+      "truth": 21239,
+      "error": 0.035
+    },
+    {
+      "family": "rc_wall",
+      "region": "NW",
+      "text": "Wand aus Stahlbeton, Betonfestigkeitsklasse C25/30, d=30 cm, ohne Schalung und Bewehrung",
+      "p50": 19900,
+      "truth": 20620,
+      "error": 0.035
+    },
+    {
+      "family": "rc_wall",
+      "region": "BY",
+      "text": "Stb.-Wand Ortbeton C25/30, Dicke 30 cm, herstellen",
+      "p50": 22300,
+      "truth": 23095,
+      "error": 0.034
+    }
+  ]
+}

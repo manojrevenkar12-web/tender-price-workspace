@@ -43,6 +43,15 @@ const ABBREVIATIONS: [RegExp, string][] = [
   [/\baussenputz\b/g, "aussen putz"],
   [/\bbodenaushub\b/g, "boden aushub"],
   [/\bbaugrubenaushub\b/g, "baugrube aushub"],
+  // Standard abbreviations in German bills of quantities.
+  [/\bhlz\b\.?/g, "hochlochziegel"],
+  [/\bze\b\.?/g, "zement estrich"],
+  [/\bwt\b\.?/g, "waschtisch"],
+  [/\buv\b\.?/g, "unterverteilung"],
+  [/\bcu\b\.?/g, "kupfer"],
+  [/\bkpl\b\.?/g, "komplett"],
+  [/\baiv\b\.?/g, "abdichtung verbund"],
+  [/\bunterdecken?\b/g, "abgehaengt decke"],
   [/\binkl\.?/g, "inklusive"],
   [/\bzzgl\.?/g, "zuzueglich"],
   [/\bca\.?/g, ""],
@@ -51,6 +60,9 @@ const ABBREVIATIONS: [RegExp, string][] = [
 /** Words that never change what a position costs. */
 const FILLER = new Set([
   "und",
+  "unter",
+  "auf",
+  "im",
   "u",
   "oder",
   "mit",
@@ -136,6 +148,7 @@ const FILLER = new Set([
  * "Geschossdecke" a kind of "Decke". Splitting them lets differently compounded wordings meet.
  */
 const HEADS = [
+  "tragschicht",
   "wand",
   "decke",
   "putz",
@@ -175,7 +188,12 @@ const SYNONYMS: Record<string, string> = {
   metallstaender: "trockenbau",
   abhang: "abgehaengt",
   abgehaengte: "abgehaengt",
-  unter: "abgehaengt",
+  waende: "wand",
+  fluessigfolie: "abdichtung verbund",
+  verbundabdichtung: "abdichtung verbund",
+  mischbatterie: "armatur",
+  einhandmischer: "armatur",
+  einhebelmischer: "armatur",
   kalksandsteinen: "kalksandstein",
   kalksandsteine: "kalksandstein",
   planziegeln: "planziegel",
@@ -205,6 +223,16 @@ function stem(w: string): string {
   for (const suffix of ["en", "et", "e"])
     if (w.endsWith(suffix) && w.length - suffix.length >= 4) return w.slice(0, -suffix.length);
   if (w.length >= 6 && /[glkrh]t$/.test(w)) return w.slice(0, -1);
+  return w;
+}
+
+/** A synonym also applies to longer forms of its word ("metallstaenderwerk"), if the word is long. */
+function synonym(w: string): string {
+  const exact = SYNONYMS[w];
+  if (exact) return exact;
+  if (w.length >= 10)
+    for (const [k, v] of Object.entries(SYNONYMS))
+      if (k.length >= 8 && w.startsWith(k)) return w.length - k.length >= 3 ? `${v} ${w.slice(k.length)}` : v;
   return w;
 }
 
@@ -246,10 +274,14 @@ function extract(text: string): { rest: string; attributes: Attributes } {
   // Nominal diameter: DN 100
   take(/\bdn\s?(\d{2,4})\b/g, (m) => ["dn", String(Number(m[1]))]);
   // Cable cross-section: NYM-J 3x1,5 (mm²)
-  take(/\b(\d{1,2})\s?x\s?(\d{1,3}(?:[.,]\d)?)\s?(?:mm2)\b/g, (m) => ["section", `${m[1]}x${num(m[2]!)}`]);
+  // (a decimal second number is a cross-section even without the unit: tile formats are whole cm)
+  take(/\b(\d{1,2})\s?x\s?(\d{1,3}(?:[.,]\d)?)\s?(?:mm2|qmm)\b|\b(\d{1,2})\s?x\s?(\d{1,2}[.,]\d)\b/g, (m) => [
+    "section",
+    `${m[1] ?? m[3]}x${num((m[2] ?? m[4])!)}`,
+  ]);
   // Thickness: d=24 cm, d = 240 mm, Dicke 17,5 cm, 24 cm dick, st. 11,5 cm
   take(
-    /\b(?:d|dicke|staerke|st\.?)\s?[=:]?\s?(\d{1,3}(?:[.,]\d{1,2})?)\s?(mm|cm)\b|\b(\d{1,3}(?:[.,]\d{1,2})?)\s?(mm|cm)\s+(?:dick|stark)\b/g,
+    /\b(?:d|[a-z]*dicke|[a-z]*staerke|st\.?)\s?[=:]?\s?(\d{1,3}(?:[.,]\d{1,2})?)\s?(mm|cm)\b|\b(\d{1,3}(?:[.,]\d{1,2})?)\s?(mm|cm)\s+(?:dick|stark)\b/g,
     (m) => {
       const value = num((m[1] ?? m[3])!);
       const unit = (m[2] ?? m[4])!;
@@ -271,8 +303,16 @@ function extract(text: string): { rest: string; attributes: Attributes } {
   // Drywall systems (W111, W112, W115), slip resistance (R9..R13), soil classes (Bodenklasse 3-5)
   take(/\bw\s?(11\d|62\d)\b/g, (m) => ["system", `w${m[1]}`]);
   take(/\br\s?(9|1[0-3])\b/g, (m) => ["slip", `r${m[1]}`]);
-  take(/\bbodenklassen?\s?(\d)\s?(?:-|bis)\s?(\d)\b/g, (m) => ["soil", `${m[1]}-${m[2]}`]);
-  take(/\bbodenklasse\s?(\d)\b/g, (m) => ["soil", `${m[1]}`]);
+  // Soil classes (DIN 18300 before 2015): "Bodenklasse 3-5", "Bodenkl. 3 bis 5", "BK 3-5", "BKL 6-7"
+  const soil = "\\b(?:bodenklassen?|bodenkl\\.?|bkl?)\\s?";
+  take(new RegExp(`${soil}(\\d)\\s?(?:-|bis)\\s?(\\d)\\b`, "g"), (m) => ["soil", `${m[1]}-${m[2]}`]);
+  take(new RegExp(`${soil}(\\d)\\b`, "g"), (m) => ["soil", `${m[1]}`]);
+  // A bare "17,5 cm" left over (not a format, not a length in m) is a thickness when it is plausible.
+  if (!attributes["thickness_mm"])
+    take(/\b(\d{1,2}(?:[.,]\d{1,2})?)\s?cm\b/g, (m) => {
+      const mm = num(m[1]!) * 10;
+      return mm >= 20 && mm <= 500 ? ["thickness_mm", String(Math.round(mm * 10) / 10)] : null;
+    });
   return { rest, attributes };
 }
 
@@ -285,9 +325,9 @@ export function normalise(text: string): NormalisedText {
       rest
         .replace(/[^a-z0-9 ]+/g, " ")
         .split(/\s+/)
-        .flatMap((w) => (SYNONYMS[w] ?? w).split(" "))
+        .flatMap((w) => synonym(w).split(" "))
         .flatMap(splitCompound)
-        .flatMap((w) => (SYNONYMS[w] ?? w).split(" "))
+        .flatMap((w) => synonym(w).split(" "))
         .filter((w) => w.length > 1 && !FILLER.has(w) && !/^\d+$/.test(w))
         .map(stem),
     ),

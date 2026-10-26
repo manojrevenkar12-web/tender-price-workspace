@@ -1,194 +1,194 @@
 {
   "excavation": [
-    "Baugrubenaushub, Bodenklasse {soil}, laden und abfahren",
-    "Aushub Baugrube BK {soil} inkl. Laden u. Abtransport",
-    "Boden der Bodenkl. {soil} DIN 18300 für Baugrube lösen, laden und abfahren",
-    "Baugrube ausheben, Boden BKL {soil}, Aushub aufladen und zur Kippe abfahren"
+    "Baugrube ausheben, Bodenklasse {soil}, laden und abfahren",
+    "Aushub Baugrube DIN 18300, Bodenkl. {soil}, inkl. Laden und Abtransport",
+    "Boden der Baugrube lösen, laden, abfahren; Homogenbereich 1 (entspr. BK {soil})",
+    "Baugrubenaushub maschinell, BKL {soil}, Aushub zur Kippe des AN abfahren"
   ],
   "backfill": [
-    "Arbeitsraum an Kellerwänden verfüllen und lagenweise verdichten",
-    "Arbeitsraumverfüllung Kelleraußenwand, verdichtet",
-    "Verfüllen des Arbeitsraumes an KG-Außenwänden inkl. Verdichten",
-    "Hinterfüllung Kellerwand im Arbeitsraum, lagenw. eingebaut und verdichtet"
+    "Arbeitsraum hinterfüllen und verdichten",
+    "Arbeitsraumverfüllung an Kelleraußenwand, lagenweise verdichtet",
+    "Hinterfüllung Arbeitsraum Kellerwand mit geeignetem Boden, lagenweise einbauen und verdichten",
+    "Verfüllen der Arbeitsräume an UG-Wänden inkl. Verdichten, Dpr >= 97 %"
   ],
   "gravel_base": [
     "Kiestragschicht unter Bodenplatte, d = {thickness} cm",
-    "Schottertragschicht unter Sohle d={thickness}cm liefern und einbauen, verdichten",
-    "Kiesschicht unter Bodenplatte {thickness} cm stark",
-    "Kiesunterbau unter Fundamentplatte, Dicke {thickness} cm, lagenweise verdichtet"
+    "Kies-/Schottertragschicht 0/32 unter Sohle liefern und einbauen, verdichtet, d={thickness} cm",
+    "Tragschicht aus Kies unter Bodenplatte, Dicke {thickness} cm, einbauen und verdichten",
+    "Kapillarbrechende Schicht Kies 16/32 unter Bodenplatte, d = {thickness} cm"
   ],
   "rc_wall": [
     "Stahlbetonwand {concrete}, d = {thickness} cm",
-    "Stb.-Wand aus Ortbeton {concrete}, Wanddicke {thickness} cm",
-    "Wände aus Stahlbeton, Betonfestigkeitsklasse {concrete}, d={thickness}cm, liefern und einbauen",
-    "Ortbetonwand Stb. {thickness} cm, Beton {concrete} XC1"
+    "Stb.-Wand Ortbeton {concrete}, Dicke {thickness} cm, herstellen",
+    "Wand aus Stahlbeton, Betonfestigkeitsklasse {concrete}, d={thickness} cm, ohne Schalung und Bewehrung",
+    "Ortbetonwand Stb. {concrete}, {thickness} cm stark, Beton liefern und einbauen"
   ],
   "rc_slab": [
     "Stahlbetondecke {concrete}, d = {thickness} cm",
-    "Stb.-Geschossdecke Ortbeton {concrete}, {thickness} cm dick",
-    "Decke aus Stahlbeton d={thickness}cm, Beton {concrete}, liefern und einbauen",
-    "Ortbeton-Flachdecke, Stb. {concrete}, Deckenstärke {thickness} cm"
+    "Stb.-Geschossdecke Ortbeton {concrete}, d={thickness} cm",
+    "Deckenplatte aus Stahlbeton, Festigkeitsklasse {concrete}, Dicke {thickness} cm, einbauen und verdichten",
+    "Ortbeton für Decken {concrete}, Plattendicke {thickness} cm, ohne Schalung und Bewehrung"
   ],
   "rc_column": [
     "Stahlbetonstütze rechteckig {concrete}",
-    "Stb.-Rechteckstütze, Beton {concrete}, liefern und einbauen",
-    "Stützen aus Stahlbeton, Querschnitt rechteckig, Betonfestigkeitsklasse {concrete}",
-    "Rechteckige Ortbetonstützen Stb. {concrete} inkl. Verdichten"
+    "Stb.-Rechteckstützen aus Ortbeton {concrete}, Beton liefern und einbauen",
+    "Stützen aus Stahlbeton, Querschnitt rechteckig, Beton {concrete}",
+    "Ortbeton Stützen {concrete}, Rechteckquerschnitt, ohne Schalung und Bewehrung"
   ],
   "foundation_slab": [
-    "Bodenplatte aus WU-Beton {concrete}",
-    "Stb.-Sohlplatte wasserundurchlässig, {concrete}, liefern und einbauen",
-    "Fundamentplatte Stahlbeton WU {concrete} nach WU-Richtlinie",
-    "Stahlbetonbodenplatte als Weiße Wanne, Beton {concrete}"
+    "Bodenplatte WU-Beton {concrete}",
+    "Stb.-Sohlplatte als Weiße Wanne, Beton {concrete} WU",
+    "Fundamentplatte aus wasserundurchlässigem Stahlbeton {concrete}",
+    "Ortbeton Bodenplatte {concrete}, WU nach DAfStb-Richtlinie, liefern und einbauen"
   ],
   "rebar": [
-    "Betonstahl B500B schneiden, biegen und verlegen",
-    "Bewehrung Stabstahl B500B, liefern, schneiden, biegen, verlegen",
-    "Betonstabstahl B500B nach DIN 488 inkl. Schneiden u. Biegen, einbauen",
-    "Stabstahlbewehrung B500B, geschnitten, gebogen, verlegt"
+    "Betonstahl B500B liefern, schneiden, biegen und verlegen",
+    "Bewehrung Stabstahl BSt 500 S (B500B), inkl. Schneiden u. Biegen, einbauen",
+    "Betonstabstahl B500B nach DIN 488, geschnitten, gebogen, verlegt",
+    "Stabstahlbewehrung B500B, alle Durchmesser, liefern und einbauen"
   ],
   "rebar_mesh": [
-    "Betonstahlmatten B500A verlegen",
-    "Bewehrung aus Lagermatten B500A liefern und verlegen",
-    "Mattenbewehrung B500A nach DIN 488, einbauen",
-    "Betonstahlmatte B500A, inkl. Zuschnitt, verlegt"
+    "Betonstahlmatten B500A liefern und verlegen",
+    "Bewehrung Lagermatten BSt 500 M (B500A), verlegen",
+    "Mattenbewehrung B500A nach DIN 488 einbauen",
+    "Betonstahlmatten B500A, Q- und R-Matten, verlegen inkl. Abstandhalter"
   ],
   "formwork_wall": [
     "Wandschalung glatt",
-    "Schalung für Stb.-Wände, glatte Ausführung",
-    "Glatte Wandschalung herstellen, vorhalten und beseitigen",
-    "Schalung Wände, Oberfläche glatt, Systemschalung"
+    "Schalung für Wände, Ansichtsfläche glatt, herstellen und beseitigen",
+    "Systemschalung Stb.-Wände, glatte Oberfläche",
+    "Schalung Ortbetonwände, glatt, inkl. Ausschalen und Reinigen"
   ],
   "ks_wall": [
     "KS-Mauerwerk d = {thickness} cm",
-    "Kalksandsteinwand {thickness} cm, KS 20-2,0 DM",
-    "Mauerwerk aus Kalksandstein, Wanddicke {thickness} cm, liefern und mauern",
-    "Wände KS {thickness} cm, Dünnbettmörtel"
+    "Kalksandsteinwand {thickness} cm, KS L-R 12-1,4, Dünnbettmörtel",
+    "Mauerwerk aus Kalksandstein DIN EN 771-2, Wanddicke {thickness} cm, liefern und herstellen",
+    "KS-Wand, d={thickness} cm, Normalmauermörtel MG IIa"
   ],
   "brick_wall": [
-    "Ziegelmauerwerk d = {thickness} cm",
-    "Hochlochziegel-Mauerwerk HLz, Wanddicke {thickness} cm",
-    "Mauerwerkswand aus Planziegeln {thickness} cm, Dünnbettmörtel, liefern und mauern",
-    "Mauerwerk Hlz {thickness} cm stark, MG IIa"
+    "Mauerwerk aus Hochlochziegeln, d = {thickness} cm",
+    "Ziegelmauerwerk HLz, Wanddicke {thickness} cm, im Dünnbett",
+    "Planziegelwand d={thickness} cm liefern und vermauern",
+    "Mauerwerkswand aus Hochlochziegeln (z. B. Poroton), {thickness} cm stark"
   ],
   "lintel": [
-    "Flachsturz, Fertigteil, l = {length} m",
-    "Fertigteilsturz als Flachsturz über Öffnungen, Länge {length} m, versetzen",
-    "Flachstürze l={length}m liefern und einbauen",
-    "Vorgefertigter Flachsturz {length} m über Tür-/Fensteröffnung"
+    "Flachsturz l = {length} m",
+    "Fertigteil-Flachsturz über Öffnungen, Länge {length} m, liefern und versetzen",
+    "Ziegel-Flachsturz, L={length} m, einbauen",
+    "Vorgefertigter Flachsturz für Tür-/Fensteröffnungen, {length} m lang"
   ],
   "drywall_partition": [
-    "GK-Trennwand {system}, Metallständerwerk",
-    "Montagewand Knauf {system} auf Metallunterkonstruktion",
-    "Trockenbau-Trennwand System {system}, Ständerwerk CW, beidseitig beplankt",
-    "Metallständerwand nach Knauf {system}, liefern und montieren"
+    "Trennwand Knauf {system}",
+    "GK-Ständerwand System Knauf {system}, Metallunterkonstruktion CW/UW",
+    "Metallständerwand, mit Gipsplatten beplankt, als Knauf {system} oder gleichwertig",
+    "Trockenbauwand {system}, CW-Profile, GKB-Beplankung, inkl. Mineralwolledämmung"
   ],
   "suspended_ceiling": [
     "Abgehängte GK-Decke",
-    "Unterdecke aus Gipskartonplatten, abgehängt, Metall-UK",
-    "Abgehängte Decke Gipsplatten auf CD-Profilen, liefern und montieren",
-    "GKB-Unterdecke abgehängt, inkl. Abhänger"
+    "Unterdecke aus Gipskartonplatten, abgehängt, Metallunterkonstruktion",
+    "Deckenbekleidung GKB 12,5 mm abgehängt an CD-Profilen, z. B. Knauf D112",
+    "Gipskarton-Unterdecke, abgehängt, glatt, Fugen gespachtelt Q2"
   ],
   "drywall_lining": [
-    "GK-Vorsatzschale an Wand",
-    "Wandbekleidung aus Gipskartonplatten",
-    "Wandverkleidung GK auf Unterkonstruktion",
-    "Vorsatzschale Gipsplatten, liefern und montieren"
+    "Vorsatzschale GK",
+    "Wandbekleidung aus Gipskartonplatten auf Unterkonstruktion",
+    "GK-Wandverkleidung, GKB 12,5 mm, z. B. Knauf W623",
+    "Trockenputz, Gipsplattenbekleidung an Wänden, geklebt, verspachtelt"
   ],
   "screed": [
     "Zementestrich schwimmend, d = {thickness} cm",
-    "Schwimmender Estrich CT-C25-F4, Dicke {thickness} cm",
-    "ZE auf Dämmung, schwimmend, {thickness} cm",
-    "Estrich aus Zement als schwimmender Estrich nach DIN 18560, Nenndicke {thickness} cm, liefern und einbauen"
+    "CT-C25-F4 schwimmender Estrich, Nenndicke {thickness} cm, auf Dämmschicht",
+    "Estrich auf Dämmschicht, Zementestrich DIN 18560-2, d={thickness} cm",
+    "Schwimmender ZE, {thickness} cm, liefern und einbauen"
   ],
   "interior_plaster": [
-    "Innenputz Kalkgips {layers}",
-    "Kalk-Gips-Putz innen, {layers}, auf Mauerwerk",
-    "{layers}er Kalkgipsputz an Innenwänden",
-    "Kalk-Gips-Maschinenputz, Innenwände, {layers}, liefern und aufbringen"
+    "Kalkgipsputz innen, {layers}",
+    "Innenputz Kalk-Gips, {layers}, auf Mauerwerk, z. B. Knauf MP 75",
+    "Maschinenputz Kalkgips {layers} an Innenwänden",
+    "Wandputz innen aus Kalk-Gips-Putzmörtel, {layers}, Oberfläche Q2"
   ],
   "exterior_plaster": [
     "Außenputz mineralisch",
-    "Mineralischer Außenputz, liefern und aufbringen",
-    "Fassadenputz mineralisch, Kalk-Zement",
-    "Mineral. Außenputz an Fassade, Unter- und Oberputz"
+    "Mineralischer Außenputz, Unter- und Oberputz, Kalkzement",
+    "Fassadenputz, mineralisch, DIN EN 998-1, liefern und aufbringen",
+    "Außenwandputz mineral., zweilagig, inkl. Gewebeeinlage"
   ],
   "floor_tiles": [
     "Bodenfliesen Feinsteinzeug {format} cm, {slip}",
-    "Feinsteinzeugfliesen Boden, Format {format} cm, Rutschhemmung {slip}, im Dünnbett verlegen",
-    "Bodenbelag aus Feinsteinzeug {format} cm, Bewertungsgruppe {slip}, liefern und verlegen",
-    "FSZ-Bodenfliesen {slip}, {format} cm"
+    "Feinsteinzeug-Bodenbelag, Format {format} cm, Rutschhemmung {slip}, im Dünnbett verlegen",
+    "Bodenbelag aus Feinsteinzeugfliesen {format} cm, Bewertungsgruppe {slip}, liefern und verlegen",
+    "FSZ-Fliesen Boden {format} cm, {slip}, Dünnbettverfahren, verfugt"
   ],
   "wall_tiles": [
-    "Wandfliesen keramisch {format} cm",
-    "Steingut-Wandfliesen, Format {format} cm, im Dünnbett",
-    "Wandbelag aus keramischen Fliesen {format} cm, liefern und verlegen",
-    "Wandfliese Keramik {format} cm inkl. Verfugen"
+    "Wandfliesen {format} cm",
+    "Steingut-Wandfliesen, Format {format} cm, im Dünnbett verlegen",
+    "Wandbekleidung aus keramischen Fliesen {format} cm, liefern und ansetzen",
+    "Keram. Wandbelag, Fliesen {format} cm, verfugt"
   ],
   "waterproofing": [
-    "Verbundabdichtung flüssig unter Fliesen in Duschen",
-    "Flüssigabdichtung (AIV) im Duschbereich, unter Fliesenbelag",
-    "Abdichtung im Verbund mit Fliesen, streichbar, Duschen, nach DIN 18534",
-    "Flüssigfolie unter Fliesen im Duschbereich, inkl. Dichtband in Ecken"
+    "Verbundabdichtung Dusche",
+    "Flüssigabdichtung im Verbund unter Fliesen, Duschbereich, 2-lagig",
+    "AIV-F im Duschbereich, z. B. PCI Lastogum, inkl. Dichtband",
+    "Abdichtung im Verbund mit Fliesen, flüssig verarbeitet, Duschen W2-I nach DIN 18534"
   ],
   "emulsion_paint": [
     "Dispersionsanstrich Innenwände, {coats}",
-    "Wände innen mit Dispersionsfarbe {coats} streichen",
-    "Innenwandanstrich Dispersion, {coats}er Anstrich",
-    "Dispersionsfarbe auf Innenwandflächen, {coats} deckend, nach DIN EN 13300"
+    "Innenwandflächen mit Dispersionsfarbe streichen, {coats}",
+    "Dispersionsfarbe weiß, Nassabrieb Kl. 2, {coats} auf Wände innen",
+    "Wandanstrich innen Dispersion, {coats}, deckend"
   ],
   "primer": [
-    "Grundierung auf Wandflächen",
-    "Wände grundieren",
-    "Grundanstrich Wand, Tiefgrund, liefern und auftragen",
-    "Voranstrich / Grundierung der Wände"
+    "Grundierung Wände",
+    "Wandflächen grundieren, Tiefgrund",
+    "Grundanstrich auf Wandflächen, lösemittelfrei",
+    "Voranstrich / Grundierung auf Putz- und GK-Wandflächen"
   ],
   "wallpaper": [
     "Raufasertapete",
     "Wände mit Raufaser tapezieren",
-    "Raufaser-Tapete liefern und kleben, Wandflächen",
-    "Tapezierarbeiten Raufaser, mittlere Körnung"
+    "Raufasertapete, mittlere Körnung, z. B. Erfurt, an Wänden kleben",
+    "Tapezierarbeiten Rauhfaser Wand, liefern und anbringen"
   ],
   "cable": [
     "NYM-J {section} mm²",
-    "Installationsleitung NYM-J {section} mm² verlegen",
-    "Mantelleitung NYM-J {section}mm², liefern und verlegen",
-    "Kabel NYM-J {section} qmm, inkl. Befestigung"
+    "Mantelleitung NYM-J {section} mm² liefern und verlegen",
+    "Installationsleitung NYM-J {section} mm², auf/unter Putz verlegt",
+    "Leitung NYM-J {section} mm², in vorh. Rohr/Kanal einziehen"
   ],
   "socket": [
-    "Schutzkontaktsteckdose UP, komplett",
-    "Unterputz-Schuko-Steckdose inkl. Dose, Einsatz und Abdeckung",
-    "Schuko-SD UP kpl.",
-    "Steckdose mit Schutzkontakt, unterputz, liefern und montieren, komplett"
+    "Schutzkontaktsteckdose UP komplett",
+    "SchuKo-Steckdose unter Putz, inkl. Gerätedose, Einsatz und Abdeckung",
+    "Steckdose 230 V UP, Schutzkontakt, komplett montiert, z. B. Gira E2",
+    "UP-Steckdose Schuko, inkl. Rahmen, betriebsfertig"
   ],
   "distribution_board": [
-    "Unterverteilung UP, 4-reihig, bestückt",
-    "UV Unterputz 4 Reihen, komplett bestückt",
-    "Unterputz-Kleinverteiler 4-reihig inkl. Bestückung mit LS und FI",
-    "Stromkreisverteiler UP, vierreihig, mit Bestückung, liefern und montieren"
+    "Unterverteilung UP 4-reihig bestückt",
+    "Unterputz-Kleinverteiler, 4-reihig, komplett bestückt mit LS/FI",
+    "UV unter Putz, 4 Reihen, inkl. Bestückung, betriebsfertig, z. B. Hager",
+    "Stromkreisverteiler UP 4-reihig, bestückt und verdrahtet"
   ],
   "drain_pipe": [
-    "KG-Rohr DN {dn} im Graben verlegen",
-    "PVC-Kanalgrundrohr KG DN {dn}, liefern und verlegen",
-    "Grundleitung KG-PVC DN{dn} in Rohrgraben",
-    "Abwasserrohr PVC-U KG, DN {dn}, nach DIN EN 1401, im Graben"
+    "KG-Rohr DN {dn}",
+    "PVC-KG-Rohr DN {dn} im Graben verlegen",
+    "Grundleitung KG DN {dn}, PVC-U, DIN EN 1401, in vorh. Graben verlegt",
+    "Kanalrohr PVC-KG, DN {dn}, liefern und verlegen, inkl. Formstücke anteilig"
   ],
   "wc": [
-    "Wand-WC mit UP-Spülkasten, komplett",
-    "Wandhängendes WC inkl. Vorwandelement und Unterputzspülkasten, kpl. montiert",
-    "Hänge-WC mit Montageelement und UP-Spülkasten, Betätigungsplatte, Sitz, komplett",
-    "WC-Anlage wandhängend, Spülkasten unter Putz, liefern und montieren"
+    "Wand-WC mit Vorwandelement komplett",
+    "Wandhängendes Tiefspül-WC inkl. UP-Spülkasten und Betätigungsplatte, komplett montiert",
+    "WC-Anlage wandhängend, Vorwandinstallation z. B. Geberit Duofix, komplett",
+    "Hänge-WC mit Unterputzspülkasten, Sitz und Drückerplatte, betriebsfertig"
   ],
   "washbasin": [
-    "Waschtisch Keramik mit Einhebelmischer, komplett",
-    "Porzellan-Waschtisch inkl. Mischbatterie, Siphon und Eckventile, kpl.",
-    "WT Keramik mit Einhandmischer, liefern und montieren",
-    "Waschbecken keramisch inkl. Waschtischarmatur, komplett montiert"
+    "Waschtisch mit Einhebelmischer komplett",
+    "Keramik-Waschtisch 60 cm inkl. Einhandmischbatterie, Siphon und Eckventile",
+    "Waschtischanlage, Sanitärporzellan, mit Mischbatterie, betriebsfertig",
+    "WT Keramik, inkl. EH-Mischer, komplett montiert"
   ],
   "copper_pipe": [
-    "Cu-Rohr Trinkwasser DN {dn}",
-    "Kupferrohr für Trinkwasserleitung DN {dn}, liefern und verlegen",
-    "Trinkwasserleitung aus Kupfer, DN{dn}, gepresst",
-    "Kupferrohrleitung TW DN {dn} nach DVGW GW 392"
+    "Kupferrohr Trinkwasser DN {dn}",
+    "Cu-Rohr DN {dn} für Trinkwasserleitung, pressverbunden",
+    "Trinkwasserleitung aus Kupferrohr DIN EN 1057, DN {dn}, liefern und verlegen",
+    "TW-Leitung Kupfer DN {dn}, inkl. Befestigung"
   ]
 }

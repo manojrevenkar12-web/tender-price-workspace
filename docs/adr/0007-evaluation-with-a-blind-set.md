@@ -21,6 +21,13 @@ is.
 - If the blind set's failures are studied to change the matcher, the set becomes a regression set
   and a new blind set is written from the brief by someone who has not seen the code.
 
+## What happened
+
+The first blind set (v1, first run: 85.8 % coverage, 89.8 % within 10 %) showed gaps in
+normalisation. They were studied and fixed in general form, v1 moved to
+`packages/sim/regression/blind-v1` with its first run in `reports/regression/blind-v1/`, and a new
+author wrote v2 from the brief alone. v2's first run: 85.2 % coverage, 100 % within 10 %.
+
 ## Consequences
 
 - The README's accuracy numbers can be reproduced from a fresh seed.

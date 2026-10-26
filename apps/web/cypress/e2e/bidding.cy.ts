@@ -2,10 +2,8 @@
 describe("bidding", () => {
   it("lists the invitations", () => {
     cy.demo().then((d) => cy.visitAs(d.roles.viewedOnly, "/bids"));
-    cy.get("[data-cy=invitation]")
-      .should("have.length.at.least", 1)
-      .first()
-      .should("contain.text", "Rohbau Haus B");
+    cy.get("[data-cy=invitation]").should("have.length.at.least", 1);
+    cy.contains("[data-cy=invitation]", "Rohbau Haus B").should("contain.text", "Not started");
   });
 
   it("autosaves a price and keeps it after a reload", () => {

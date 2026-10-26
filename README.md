@@ -14,23 +14,30 @@ set, and the deployment described as code (Docker, Kubernetes, Terraform for AWS
 
 From `reports/EVALUATION.md` (regenerate with `pnpm --filter @tpw/sim evaluate` on a seeded database):
 
-|                                                                 |   coverage | median error | within 20 % | true price inside p10-p90 | matches on the same kind of work |
+| wording set                                                     |   coverage | median error | within 10 % | true price inside p10-p90 | matches on the same kind of work |
 | --------------------------------------------------------------- | ---------: | -----------: | ----------: | ------------------------: | -------------------------------: |
-| dev wordings (used while building the matcher)                  |     98.8 % |        1.4 % |       100 % |                     100 % |                           99.9 % |
-| **blind wordings, first run** (written without seeing the code) | **85.8 %** |    **1.6 %** |  **96.2 %** |                    99.6 % |                           99.7 % |
+| dev (used while building the matcher)                           |     97.6 % |        1.4 % |       100 % |                     100 % |                            100 % |
+| blind v1, first run                                             |     85.8 % |        1.6 % |      89.8 % |                    99.6 % |                           99.7 % |
+| blind v1 after its failures were fixed (now a regression set)   |     94.0 % |        1.3 % |       100 % |                     100 % |                           99.9 % |
+| **blind v2, first run** (new wordings, written after the fixes) | **85.2 %** |    **1.3 %** |   **100 %** |                 **100 %** |                       **99.9 %** |
 
+- Each blind set was written from `packages/sim/blind/BRIEF.md` alone by an author who saw neither
+  the code nor the history wordings. v1's first run missed soil classes written "BK 3-5", thicknesses
+  written "Wanddicke 30 cm", cable sections in "qmm" and abbreviations such as Hlz, ZE, WT, UV, Cu and
+  AIV; those were fixed in general form, v1 became a regression set, and v2 was written fresh
+  (`docs/adr/0007`).
+- On v2's first run every published range had its median within 10 % of the true price. What it
+  still misses shows up as coverage: 15 % of positions get no range, mostly wordings that share
+  too few words with the history (gravel bases written "Kies..." where the history says
+  "Schotter..."). The platform says so instead of guessing.
 - Coverage is the share of positions that get a published range; the rest are suppressed with a
-  reason rather than shown with a number nobody can stand behind (fewer than five companies, one
-  company dominating, no matching history).
-- The largest blind errors are excavation positions with the soil class written "BK 3-5" or
-  "BKL 3-5", which the attribute extractor does not read; prices for soil classes 3-5 and 6-7 get
-  mixed. It is recorded in the first run, not tuned away (`docs/adr/0007`).
-- Comparison of 2,000 positions x 25 bids: 255 ms p50 in process, 0.6 MB over the wire (gzip).
+  reason (fewer than five companies, one company dominating, no matching history).
+- Comparison of 2,000 positions x 25 bids: 245 ms p50 in process, 0.6 MB over the wire (gzip).
 - Pricing one position: about 50 ms. Pricing a 2,000-position BoQ in the background job: about 40 s.
 
 | suite                        | tests | what it covers                                                                                                                                                                                                    |
 | ---------------------------- | ----: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/domain`            |    82 | units, money, GAEB X83/X84, text normalisation and matching, addenda, comparison flags, benchmark and disclosure control                                                                                          |
+| `packages/domain`            |    86 | units, money, GAEB X83/X84, text normalisation and matching, addenda, comparison flags, benchmark and disclosure control                                                                                          |
 | `apps/api` (Postgres)        |    39 | row-level-security tenancy, tenders, addenda and rebasing, revision conflicts, X84 import, awards and idempotent contributions, market ranges, jobs (retry, SKIP LOCKED), live events under RLS, sign-in, metrics |
 | `apps/web`                   |    24 | price input parsing, loading/error/empty states, price strip, flags, the bid editor's autosave and conflict handling                                                                                              |
 | `packages/sim`               |    11 | evaluation cases and metrics, truth isolation (no platform file reads the simulation's truth)                                                                                                                     |
@@ -145,4 +152,4 @@ All from the environment (`apps/api/src/config.ts`): `DATABASE_URL`, `MIGRATION_
   `verify-full`.
 - Pricing a very large BoQ takes about 40 s in the background; the buyer sees the ranges arrive
   over the live event stream. An in-memory candidate index per worker would cut that further.
-- Soil classes written as "BK"/"BKL" are not extracted (see Results).
+- About 15 % of positions written in unseen ways get no market range (see Results).

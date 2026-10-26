@@ -114,3 +114,28 @@ describe("word forms", () => {
     expect(sameWord("wand", "wandflaech")).toBe(false); // too short to be sure
   });
 });
+
+describe("estimators' abbreviations and attributes (from the first blind set's failures)", () => {
+  const attrs = (t: string) => normalise(t).attributes;
+  it("reads soil classes however they are abbreviated", () => {
+    for (const t of ["Bodenklasse 3-5", "Bodenkl. 3 bis 5", "BK 3-5", "BKL 3-5"])
+      expect(attrs(t)["soil"]).toBe("3-5");
+  });
+  it("reads compound thickness words and bare centimetres", () => {
+    expect(attrs("Stb.-Wand C25/30, Wanddicke 30 cm")["thickness_mm"]).toBe("300");
+    expect(attrs("Kalksandsteinwand 11,5 cm")["thickness_mm"]).toBe("115");
+    expect(attrs("Wandfliesen 30x60 cm")).toEqual({ format_cm: "30x60" });
+  });
+  it("reads cable sections with qmm or without a unit", () => {
+    expect(attrs("NYM-J 3x1,5 qmm")["section"]).toBe("3x1.5");
+    expect(attrs("NYM-J 5x2,5")["section"]).toBe("5x2.5");
+  });
+  it("expands standard abbreviations and keeps the rest of a compound", () => {
+    expect(normalise("Cu-Rohr").words).toContain("kupfer");
+    expect(normalise("Abdichtung AIV").words).toContain("verbund");
+    expect(normalise("Stabstahlbewehrung").words).toEqual(
+      expect.arrayContaining(["betonstahl", "bewehrung"]),
+    );
+    expect(normalise("Kiestragschicht").words).toContain("tragschich");
+  });
+});

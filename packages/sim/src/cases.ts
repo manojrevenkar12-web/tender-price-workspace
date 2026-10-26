@@ -11,7 +11,7 @@ import { readFileSync } from "node:fs";
 import { FAMILIES, type Family, type Region, truePrice } from "./catalog.ts";
 import { mulberry32 } from "./rng.ts";
 
-export type WordingSet = "dev" | "blind";
+export type WordingSet = "dev" | "blind" | "regression-v1";
 
 export interface Case {
   set: WordingSet;
@@ -60,17 +60,22 @@ export function combinations(f: Family): Record<string, string | number>[] {
   return out;
 }
 
-export function loadBlind(
-  path = new URL("../blind/phrasings.json", import.meta.url),
-): Record<string, string[]> {
-  return JSON.parse(readFileSync(path, "utf8")) as Record<string, string[]>;
+const WORDINGS: Record<Exclude<WordingSet, "dev">, URL> = {
+  blind: new URL("../blind/phrasings.json", import.meta.url),
+  // Blind set v1: its failures were studied (soil classes and more), so it is a regression set now.
+  "regression-v1": new URL("../regression/blind-v1/phrasings.json", import.meta.url),
+};
+
+export function loadBlind(set: Exclude<WordingSet, "dev"> = "blind"): Record<string, string[]> {
+  return JSON.parse(readFileSync(WORDINGS[set], "utf8")) as Record<string, string[]>;
 }
 
 export const EVAL_REGIONS: Region[] = ["BE", "BY", "SN", "NW"];
 /** The platform's "now": the quarter after the last quarter of history. */
 export const EVAL_QUARTER = "2026Q4";
 
-export function cases(set: WordingSet, blind: Record<string, string[]> = loadBlind()): Case[] {
+export function cases(set: WordingSet, wordings?: Record<string, string[]>): Case[] {
+  const blind = set === "dev" ? {} : (wordings ?? loadBlind(set));
   const r = mulberry32(2026);
   const out: Case[] = [];
   for (const f of FAMILIES) {

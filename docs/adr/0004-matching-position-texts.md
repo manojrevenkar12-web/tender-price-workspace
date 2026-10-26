@@ -27,11 +27,11 @@ Thresholds live in `MATCH` (`apps/api/src/services/pricing.ts`).
 
 ## Consequences
 
-- Development wordings: 99 % coverage, every answered median within 10 % of the true price.
-  Blind wordings (written without seeing the code), first run: 86 % coverage, median error 1.6 %.
-  The blind set's largest errors are soil classes written "BK 3-5" / "BKL 3-5", which the attribute
-  extractor does not read, so classes 3-5 and 6-7 are mixed. That is recorded, not tuned away
-  (ADR 7).
+- Development wordings: 98 % coverage, every answered median within 10 % of the true price.
+  The first blind set (v1) found gaps in step 1 (soil classes as "BK 3-5", "Wanddicke 30 cm",
+  cable sections in "qmm", common abbreviations); they were fixed in general form and v1 became a
+  regression set. The second blind set's first run: 85 % coverage, every answered median within
+  10 % (ADR 7).
 - A 2,000-position bill of quantities takes about 40 s in the background job (four connections);
   a single position about 50 ms. The next step for speed is an in-memory candidate index per
   worker or precomputed embeddings; the current cost is mostly the two index searches per position.
